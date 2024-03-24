@@ -3,12 +3,13 @@ import { RecordRepository } from '../entities/RecordRepository';
 
 export class CreateRecords {
   private recordRepository: RecordRepository;
+
   constructor(injectedRepository: RecordRepository) {
     this.recordRepository = injectedRepository;
   }
 
-  async execute(recordsToBeCreated: Record[]): Promise<Record[]> {
-    const recordBundle = processRecords(recordsToBeCreated);
+  async execute(recordsToCreate: Record[]): Promise<Record[]> {
+    const recordBundle: Record[] = processRecords(recordsToCreate);
     return await this.recordRepository.createEntries(recordBundle);
   }
 }

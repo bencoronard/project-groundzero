@@ -1,17 +1,20 @@
 import { Record } from './Record';
 export interface RecordRepository {
-  createEntries(records: Record[]): Promise<Record[]>;
+  createEntries(recordsToInsert: Record[]): Promise<Record[]>;
+
   readEntries(
-    match: Partial<Record>,
-    limit?: number,
-    offset?: number
+    matchCriteria: Partial<Record>,
+    matchLimit?: number,
+    matchOffset?: number
   ): Promise<Record[] | null>;
+
   updateEntries(
-    match: Partial<Record>,
-    update: Partial<Record>
+    matchCriteria: Partial<Record>,
+    updateValues: Partial<Record>
   ): Promise<Record[] | null>;
+
   deleteEntries(
-    match: Partial<Record>,
-    offset?: number
+    matchCriteria: Partial<Record>,
+    matchOffset?: number
   ): Promise<Record[] | null>;
 }
