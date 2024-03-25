@@ -1,12 +1,12 @@
-import { Record } from "./Record";
+import { Record } from './Record';
 export interface RecordRepository {
   createEntries(recordsToInsert: Record[]): Promise<Record[]>;
 
-  // readEntries(
-  //   matchCriteria: Partial<Record>,
-  //   matchLimit?: number,
-  //   matchOffset?: number
-  // ): Promise<Record[]>;
+  readEntries(
+    matchCriteria: Partial<Record>,
+    matchLimit?: number,
+    matchOffset?: number
+  ): Promise<Record[]>;
 
   // updateEntries(
   //   matchCriteria: Partial<Record>,

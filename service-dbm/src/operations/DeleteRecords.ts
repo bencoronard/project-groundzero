@@ -1,7 +1,7 @@
 import { Record } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 
-export class DeleteRecord {
+export class DeleteRecords {
   private recordRepository: RecordRepository;
 
   constructor(injectedRepository: RecordRepository) {

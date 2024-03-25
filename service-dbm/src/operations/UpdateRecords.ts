@@ -1,7 +1,7 @@
 import { Record } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 
-export class FetchRecord {
+export class UpdateRecords {
   private recordRepository: RecordRepository;
 
   constructor(injectedRepository: RecordRepository) {
@@ -9,14 +9,12 @@ export class FetchRecord {
   }
 
   async execute(
-    fetchCriteria: Partial<Record>,
-    fetchLimit?: number,
-    fetchOffset?: number
+    updateCriteria: Partial<Record>,
+    updateValues: Partial<Record>
   ): Promise<Record[] | null> {
-    return await this.recordRepository.readEntries(
-      fetchCriteria,
-      fetchLimit,
-      fetchOffset
+    return await this.recordRepository.updateEntries(
+      updateCriteria,
+      updateValues
     );
   }
 }
