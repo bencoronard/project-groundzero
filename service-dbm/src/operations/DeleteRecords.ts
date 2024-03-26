@@ -11,10 +11,11 @@ export class DeleteRecords {
   async execute(
     deleteCriteria: Partial<Record>,
     deleteOffset?: number
-  ): Promise<Record[] | null> {
-    return await this.recordRepository.deleteEntries(
+  ): Promise<string> {
+    const deletedRecords = await this.recordRepository.deleteEntries(
       deleteCriteria,
       deleteOffset
     );
+    return `Number of records deleted: ${deletedRecords.length}`;
   }
 }

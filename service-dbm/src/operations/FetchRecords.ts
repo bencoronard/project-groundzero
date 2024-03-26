@@ -12,11 +12,12 @@ export class FetchRecords {
     fetchCriteria: Partial<Record>,
     fetchLimit?: number,
     fetchOffset?: number
-  ): Promise<Record[]> {
-    return await this.recordRepository.readEntries(
+  ): Promise<string> {
+    const fetchedRecords: Record[] = await this.recordRepository.readEntries(
       fetchCriteria,
       fetchLimit,
       fetchOffset
     );
+    return JSON.stringify(fetchedRecords);
   }
 }

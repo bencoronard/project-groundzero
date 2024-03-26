@@ -8,13 +8,13 @@ export interface RecordRepository {
     matchOffset?: number
   ): Promise<Record[]>;
 
-  // updateEntries(
-  //   matchCriteria: Partial<Record>,
-  //   updateValues: Partial<Record>
-  // ): Promise<Record[]>;
+  updateEntries(
+    matchCriteria: Partial<Record>,
+    updateValues: Partial<Record>
+  ): Promise<Record[]>;
 
-  // deleteEntries(
-  //   matchCriteria: Partial<Record>,
-  //   matchOffset?: number
-  // ): Promise<Record[]>;
+  deleteEntries(
+    matchCriteria: Partial<Record>,
+    matchOffset?: number
+  ): Promise<Record[]>;
 }

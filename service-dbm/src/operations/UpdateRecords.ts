@@ -11,10 +11,11 @@ export class UpdateRecords {
   async execute(
     updateCriteria: Partial<Record>,
     updateValues: Partial<Record>
-  ): Promise<Record[] | null> {
-    return await this.recordRepository.updateEntries(
+  ): Promise<string> {
+    const updatedRecords: Record[] = await this.recordRepository.updateEntries(
       updateCriteria,
       updateValues
     );
+    return `Number of records updated: ${updatedRecords.length}`;
   }
 }

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { Record } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
-import path, { resolve } from 'path';
+import path from 'path';
 
 export class InMemoryStorage implements RecordRepository {
   private storedRecords: Record[];
@@ -19,9 +19,9 @@ export class InMemoryStorage implements RecordRepository {
       try {
         recordsToInsert.forEach((record) => {
           this.storedRecords.push(record);
+          this.numRecords++;
           insertedRecords.push(record);
         });
-        this.numRecords += insertedRecords.length;
         resolve(insertedRecords);
       } catch {
         reject(insertedRecords);
@@ -47,10 +47,12 @@ export class InMemoryStorage implements RecordRepository {
         while (numMatched < limit && searchIndex < this.numRecords) {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
-          Object.keys(matchCriteria).forEach((key) => {
-            const field = key as keyof Partial<Record>;
+          const matchKeys = Object.keys(matchCriteria).map(
+            (key) => key as keyof Partial<Record>
+          );
+          matchKeys.forEach((key) => {
             matched =
-              currentRecord[field] === matchCriteria[field] ? matched : false;
+              currentRecord[key] === matchCriteria[key] ? matched : false;
           });
           if (matched) {
             retrievedRecords.push(currentRecord);
@@ -65,29 +67,75 @@ export class InMemoryStorage implements RecordRepository {
     });
   }
 
-  // async readEntries(
-  //   matchCriteria: Partial<Record>,
-  //   matchLimit?: number | undefined,
-  //   matchOffset?: number | undefined
-  // ): Promise<Record[]> {
-  //   const retrievedRecords: Record[] | null = this.storedRecords.filter(
-  //     (record) => {
-  //       let matched: boolean = true;
-  //       Object.keys(matchCriteria).forEach((key) => {
-  //         const recordKey = key as keyof Partial<Record>;
-  //         matched =
-  //           record[recordKey] === matchCriteria[recordKey] ? matched : false;
-  //       });
-  //       return matched;
-  //     }
-  //   );
-  //   return retrievedRecords;
-  // }
+  async updateEntries(
+    matchCriteria: Partial<Record>,
+    updateValues: Partial<Record>
+  ): Promise<Record[]> {
+    return new Promise((resolve, reject) => {
+      const updatedRecords: Record[] = [];
+      try {
+        let searchIndex: number = 0;
+        while (searchIndex < this.numRecords) {
+          let matched: boolean = true;
+          const currentRecord: Record = this.storedRecords[searchIndex];
+          const matchKeys = Object.keys(matchCriteria).map(
+            (key) => key as keyof Partial<Record>
+          );
+          const updateKeys = Object.keys(updateValues).map(
+            (key) => key as keyof Partial<Record>
+          );
+          matchKeys.forEach((key) => {
+            matched =
+              currentRecord[key] === matchCriteria[key] ? matched : false;
+          });
+          if (matched) {
+            updateKeys.forEach((key) => {
+              currentRecord[key] = updateValues[key];
+            });
+            updatedRecords.push(currentRecord);
+          }
+          searchIndex++;
+        }
+        resolve(updatedRecords);
+      } catch {
+        reject(updatedRecords);
+      }
+    });
+  }
 
-  // async updateEntries(
-  //   matchCriteria: Partial<Record>,
-  //   updateValues: Partial<Record>
-  // ): Promise<Record[] | null> {}
+  async deleteEntries(
+    matchCriteria: Partial<Record>,
+    matchOffset?: number | undefined
+  ): Promise<Record[]> {
+    return new Promise((resolve, reject) => {
+      const deletedRecords: Record[] = [];
+      try {
+        let searchIndex: number =
+          matchOffset && matchOffset >= 0 ? matchOffset : 0;
+        while (searchIndex < this.numRecords) {
+          let matched: boolean = true;
+          const currentRecord: Record = this.storedRecords[searchIndex];
+          const matchKeys = Object.keys(matchCriteria).map(
+            (key) => key as keyof Partial<Record>
+          );
+          matchKeys.forEach((key) => {
+            matched =
+              currentRecord[key] === matchCriteria[key] ? matched : false;
+          });
+          if (matched) {
+            deletedRecords.push(currentRecord);
+            this.storedRecords.splice(searchIndex, 1);
+            this.numRecords--;
+            searchIndex--;
+          }
+          searchIndex++;
+        }
+        resolve(deletedRecords);
+      } catch {
+        reject(deletedRecords);
+      }
+    });
+  }
 
   showRecords(): void {
     console.log(this.storedRecords);

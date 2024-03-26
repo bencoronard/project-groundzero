@@ -2,6 +2,8 @@ import { Record } from './entities/Record';
 import { InMemoryStorage } from './detachable/InMemoryStorage';
 import { CreateRecords } from './operations/CreateRecords';
 import { FetchRecords } from './operations/FetchRecords';
+import { UpdateRecords } from './operations/UpdateRecords';
+import { DeleteRecords } from './operations/DeleteRecords';
 
 const db: InMemoryStorage = new InMemoryStorage();
 
@@ -26,10 +28,12 @@ const newData: Record[] = [
   },
 ];
 const matchCriteria: Partial<Record> = { field4: 'US' };
-// const updateData: Partial<Record> = { field3: 'american' };
+// const updateData: Partial<Record> = { field4: 'Unknown' };
 
 // const createRecords = new CreateRecords(db);
 // const fetchRecords = new FetchRecords(db);
+// const updateRecords = new UpdateRecords(db);
+const deleteRecords = new DeleteRecords(db);
 
 // const operationResult = createRecords.execute(newData);
 
@@ -38,10 +42,12 @@ const matchCriteria: Partial<Record> = { field4: 'US' };
 //   db.showRecords();
 // });
 
-const myPromise = db.readEntries(matchCriteria, 2, 30);
+const operationResult = deleteRecords.execute(matchCriteria, 1);
 
-myPromise.then((result) => {
+operationResult.then((result) => {
+  console.log(typeof result);
   console.log(result);
+  db.showRecords();
 });
 
 console.log('Hello, world!');
