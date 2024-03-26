@@ -1,53 +1,20 @@
-import { Record } from './entities/Record';
-import { InMemoryStorage } from './detachable/InMemoryStorage';
-import { CreateRecords } from './operations/CreateRecords';
-import { FetchRecords } from './operations/FetchRecords';
-import { UpdateRecords } from './operations/UpdateRecords';
-import { DeleteRecords } from './operations/DeleteRecords';
+import express, { Request, Response } from 'express';
 
-const db: InMemoryStorage = new InMemoryStorage();
+const app = express();
+app.use(express.json());
 
-const newData: Record[] = [
-  {
-    field1: '25',
-    field2: 'Clover',
-    field3: 'controller',
-    field4: 'GB',
-  },
-  {
-    field1: '26',
-    field2: 'Shatter',
-    field3: 'duelist',
-    field4: null,
-  },
-  {
-    field1: '27',
-    field2: 'Joules',
-    field3: 'sentinel',
-    field4: null,
-  },
-];
-const matchCriteria: Partial<Record> = { field4: 'US' };
-// const updateData: Partial<Record> = { field4: 'Unknown' };
-
-// const createRecords = new CreateRecords(db);
-// const fetchRecords = new FetchRecords(db);
-// const updateRecords = new UpdateRecords(db);
-const deleteRecords = new DeleteRecords(db);
-
-// const operationResult = createRecords.execute(newData);
-
-// operationResult.then((result) => {
-//   console.log(result);
-//   db.showRecords();
+// app.get('/users/:id', async (req: Request, res: Response) => {
+//   try {
+//     const userId = req.params.id;
+//     const user = await getUserByIdUseCase.execute(userId);
+//     if (user) {
+//       res.status(200).json(user);
+//     } else {
+//       res.status(404).json({ message: 'User not found' });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: 'Internal server error' });
+//   }
 // });
 
-const operationResult = deleteRecords.execute(matchCriteria, 1);
-
-operationResult.then((result) => {
-  console.log(typeof result);
-  console.log(result);
-  db.showRecords();
-});
-
-console.log('Hello, world!');
+console.log('End of the script!');
