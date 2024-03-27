@@ -1,7 +1,10 @@
 import express, { Request, Response } from 'express';
 
+const PORT: number = 5000;
+
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // app.get('/users/:id', async (req: Request, res: Response) => {
 //   try {
@@ -17,4 +20,6 @@ app.use(express.json());
 //   }
 // });
 
-console.log('End of the script!');
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
