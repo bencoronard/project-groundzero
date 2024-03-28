@@ -10,7 +10,7 @@ export class Interactor implements RecordInteractor {
   }
 
   async createRecords(recordsToCreate: Record[]): Promise<string> {
-    const recordBundle: Record[] = processRecords(recordsToCreate);
+    const recordBundle: Record[] = await processRecords(recordsToCreate);
     const insertedRecords: Record[] = await this.recordRepository.createEntries(
       recordBundle
     );
@@ -53,15 +53,21 @@ export class Interactor implements RecordInteractor {
   }
 }
 
-function processRecords(records: Record[]): Record[] {
-  const processedRecords: Record[] = [];
-  records.forEach((record) => {
-    processedRecords.push({
-      field1: record.field1,
-      field2: record.field2 + ' xFF2',
-      field3: record.field3 + ' xFF3',
-      field4: record.field4 + ' xFF4',
-    });
+async function processRecords(records: Record[]): Promise<Record[]> {
+  return new Promise((resolve, reject) => {
+    const processedRecords: Record[] = [];
+    try {
+      records.forEach((record) => {
+        processedRecords.push({
+          field1: record.field1,
+          field2: record.field2 + ' xFF2',
+          field3: record.field3 + ' xFF3',
+          field4: record.field4 + ' xFF4',
+        });
+      });
+      resolve(processedRecords);
+    } catch {
+      reject(processedRecords);
+    }
   });
-  return processedRecords;
 }
