@@ -10,11 +10,32 @@ export class Interactor implements RecordInteractor {
   }
 
   async createRecords(recordsToCreate: Record[]): Promise<string> {
-    const recordBundle: Record[] = await processRecords(recordsToCreate);
-    const insertedRecords: Record[] = await this.recordRepository.createEntries(
-      recordBundle
-    );
-    return `Number of records created: ${insertedRecords.length}`;
+    let operationResult: string;
+    try {
+      const numRecords: number = recordsToCreate.length;
+      const recordBundle: Record[] = await processRecords(recordsToCreate);
+      const insertedRecords: Record[] =
+        await this.recordRepository.createEntries(recordBundle);
+      operationResult = `Number of records created: ${insertedRecords.length} of ${numRecords}`;
+    } catch {
+      operationResult = 'Error creating records';
+    }
+    return operationResult;
+  }
+
+  async updateRecords(
+    updateCriteria: Partial<Record>,
+    updateValues: Partial<Record>
+  ): Promise<string> {
+    let operationResult: string;
+    try {
+      const updatedRecords: Record[] =
+        await this.recordRepository.updateEntries(updateCriteria, updateValues);
+      operationResult = `Number of records updated: ${updatedRecords.length}`;
+    } catch {
+      operationResult = 'Error updating records';
+    }
+    return operationResult;
   }
 
   async fetchRecords(
@@ -22,34 +43,42 @@ export class Interactor implements RecordInteractor {
     fetchLimit?: number,
     fetchOffset?: number
   ): Promise<string> {
-    const fetchedRecords: Record[] = await this.recordRepository.readEntries(
-      fetchCriteria,
-      fetchLimit,
-      fetchOffset
-    );
-    return JSON.stringify(fetchedRecords);
-  }
-
-  async updateRecords(
-    updateCriteria: Partial<Record>,
-    updateValues: Partial<Record>
-  ): Promise<string> {
-    const updatedRecords: Record[] = await this.recordRepository.updateEntries(
-      updateCriteria,
-      updateValues
-    );
-    return `Number of records updated: ${updatedRecords.length}`;
+    let operationResult: string;
+    try {
+      const limit: number =
+        fetchLimit && fetchLimit >= 0
+          ? fetchLimit
+          : this.recordRepository.numEntries;
+      const offset: number = fetchOffset && fetchOffset >= 0 ? fetchOffset : 0;
+      const fetchedRecords: Record[] = await this.recordRepository.readEntries(
+        fetchCriteria,
+        limit,
+        offset
+      );
+      operationResult = JSON.stringify(fetchedRecords);
+    } catch {
+      operationResult = 'Error fetching records';
+    }
+    return operationResult;
   }
 
   async deleteRecords(
     deleteCriteria: Partial<Record>,
     deleteOffset?: number
   ): Promise<string> {
-    const deletedRecords = await this.recordRepository.deleteEntries(
-      deleteCriteria,
-      deleteOffset
-    );
-    return `Number of records deleted: ${deletedRecords.length}`;
+    let operationResult: string;
+    try {
+      const offset: number =
+        deleteOffset && deleteOffset >= 0 ? deleteOffset : 0;
+      const deletedRecords = await this.recordRepository.deleteEntries(
+        deleteCriteria,
+        offset
+      );
+      operationResult = `Number of records deleted: ${deletedRecords.length}`;
+    } catch {
+      operationResult = 'Error deleting records';
+    }
+    return operationResult;
   }
 }
 
