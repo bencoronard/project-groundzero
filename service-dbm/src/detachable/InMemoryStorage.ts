@@ -5,12 +5,12 @@ import path from 'path';
 
 export class InMemoryStorage implements RecordRepository {
   private storedRecords: Record[];
-  private numRecords: number;
+  public numEntries: number;
   constructor() {
     this.storedRecords = JSON.parse(
       readFileSync(path.join(__dirname, '..', 'agents.json'), 'utf-8')
     );
-    this.numRecords = this.storedRecords.length;
+    this.numEntries = this.storedRecords.length;
   }
 
   async createEntries(recordsToInsert: Record[]): Promise<Record[]> {
@@ -19,50 +19,12 @@ export class InMemoryStorage implements RecordRepository {
       try {
         recordsToInsert.forEach((record) => {
           this.storedRecords.push(record);
-          this.numRecords++;
+          this.numEntries++;
           insertedRecords.push(record);
         });
         resolve(insertedRecords);
       } catch {
         reject(insertedRecords);
-      }
-    });
-  }
-
-  async readEntries(
-    matchCriteria: Partial<Record>,
-    matchLimit?: number,
-    matchOffset?: number
-  ): Promise<Record[]> {
-    return new Promise((resolve, reject) => {
-      const retrievedRecords: Record[] = [];
-      try {
-        const limit: number =
-          matchLimit && matchLimit >= 0 && matchLimit <= this.numRecords
-            ? matchLimit
-            : this.numRecords;
-        let numMatched: number = 0;
-        let searchIndex: number =
-          matchOffset && matchOffset >= 0 ? matchOffset : 0;
-        while (numMatched < limit && searchIndex < this.numRecords) {
-          let matched: boolean = true;
-          const currentRecord: Record = this.storedRecords[searchIndex];
-          const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Partial<Record>
-          );
-          matchKeys.forEach((key) => {
-            matched =
-              currentRecord[key] === matchCriteria[key] ? matched : false;
-          });
-          if (matched) {
-            retrievedRecords.push(currentRecord);
-            numMatched++;
-          }
-          searchIndex++;
-        }
-        resolve(retrievedRecords);
-      } catch {
-        reject(retrievedRecords);
       }
     });
   }
@@ -75,7 +37,7 @@ export class InMemoryStorage implements RecordRepository {
       const updatedRecords: Record[] = [];
       try {
         let searchIndex: number = 0;
-        while (searchIndex < this.numRecords) {
+        while (searchIndex < this.numEntries) {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
           const matchKeys = Object.keys(matchCriteria).map(
@@ -103,16 +65,48 @@ export class InMemoryStorage implements RecordRepository {
     });
   }
 
+  async readEntries(
+    matchCriteria: Partial<Record>,
+    matchLimit: number,
+    matchOffset: number
+  ): Promise<Record[]> {
+    return new Promise((resolve, reject) => {
+      const retrievedRecords: Record[] = [];
+      try {
+        let numMatched: number = 0;
+        let searchIndex: number = matchOffset;
+        while (numMatched < matchLimit && searchIndex < this.numEntries) {
+          let matched: boolean = true;
+          const currentRecord: Record = this.storedRecords[searchIndex];
+          const matchKeys = Object.keys(matchCriteria).map(
+            (key) => key as keyof Partial<Record>
+          );
+          matchKeys.forEach((key) => {
+            matched =
+              currentRecord[key] === matchCriteria[key] ? matched : false;
+          });
+          if (matched) {
+            retrievedRecords.push(currentRecord);
+            numMatched++;
+          }
+          searchIndex++;
+        }
+        resolve(retrievedRecords);
+      } catch {
+        reject(retrievedRecords);
+      }
+    });
+  }
+
   async deleteEntries(
     matchCriteria: Partial<Record>,
-    matchOffset?: number
+    matchOffset: number
   ): Promise<Record[]> {
     return new Promise((resolve, reject) => {
       const deletedRecords: Record[] = [];
       try {
-        let searchIndex: number =
-          matchOffset && matchOffset >= 0 ? matchOffset : 0;
-        while (searchIndex < this.numRecords) {
+        let searchIndex: number = matchOffset;
+        while (searchIndex < this.numEntries) {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
           const matchKeys = Object.keys(matchCriteria).map(
@@ -125,7 +119,7 @@ export class InMemoryStorage implements RecordRepository {
           if (matched) {
             deletedRecords.push(currentRecord);
             this.storedRecords.splice(searchIndex, 1);
-            this.numRecords--;
+            this.numEntries--;
             searchIndex--;
           }
           searchIndex++;

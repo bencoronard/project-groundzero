@@ -4,9 +4,11 @@ import { RequestHTTP } from '../entities/RequestHTTP';
 
 export class Controller {
   private recordInteractor: RecordInteractor;
+
   constructor(injectedInteractor: RecordInteractor) {
     this.recordInteractor = injectedInteractor;
   }
+
   async route(request: RequestHTTP): Promise<string> {
     let response: string = 'Invalid request';
 
@@ -14,15 +16,7 @@ export class Controller {
       case 'GET':
         if (request.queryParams) {
           try {
-            const queryData: Partial<Record> = request.queryParams;
-            const limit: number | undefined = queryData.limit
-              ? queryData.limit
-              : undefined;
-            response = await this.recordInteractor.fetchRecords(
-              queryData,
-              queryData.limit,
-              queryData.offset
-            );
+            // response = await this.recordInteractor.fetchRecords();
           } catch {
             response = 'Invalid query data';
           }
