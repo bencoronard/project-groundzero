@@ -31,8 +31,8 @@ export class InMemoryStorage implements RecordRepository {
 
   async readEntries(
     matchCriteria: Partial<Record>,
-    matchLimit?: number | undefined,
-    matchOffset?: number | undefined
+    matchLimit?: number,
+    matchOffset?: number
   ): Promise<Record[]> {
     return new Promise((resolve, reject) => {
       const retrievedRecords: Record[] = [];
@@ -105,7 +105,7 @@ export class InMemoryStorage implements RecordRepository {
 
   async deleteEntries(
     matchCriteria: Partial<Record>,
-    matchOffset?: number | undefined
+    matchOffset?: number
   ): Promise<Record[]> {
     return new Promise((resolve, reject) => {
       const deletedRecords: Record[] = [];

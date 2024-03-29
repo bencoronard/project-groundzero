@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.all('/records', async (req, res) => {
+app.all('/records*', async (req, res) => {
   const reqHTTP = new ExpressHTTP(req);
 });
 

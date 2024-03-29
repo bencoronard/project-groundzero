@@ -19,8 +19,8 @@ export class Interactor implements RecordInteractor {
 
   async fetchRecords(
     fetchCriteria: Partial<Record>,
-    fetchLimit?: number | undefined,
-    fetchOffset?: number | undefined
+    fetchLimit?: number,
+    fetchOffset?: number
   ): Promise<string> {
     const fetchedRecords: Record[] = await this.recordRepository.readEntries(
       fetchCriteria,
@@ -60,9 +60,9 @@ async function processRecords(records: Record[]): Promise<Record[]> {
       records.forEach((record) => {
         processedRecords.push({
           field1: record.field1,
-          field2: record.field2 + ' xFF2',
-          field3: record.field3 + ' xFF3',
-          field4: record.field4 + ' xFF4',
+          field2: record.field2,
+          field3: record.field3,
+          field4: record.field4,
         });
       });
       resolve(processedRecords);

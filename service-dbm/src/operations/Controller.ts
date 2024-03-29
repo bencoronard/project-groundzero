@@ -1,3 +1,4 @@
+import { Record } from '../entities/Record';
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { RequestHTTP } from '../entities/RequestHTTP';
 
@@ -8,17 +9,44 @@ export class Controller {
   }
   async route(request: RequestHTTP): Promise<string> {
     let response: string = 'Invalid request';
-    switch (request.method) {
-      case 'POST':
-        if (request.body) {
+
+    switch (request.method.toUpperCase()) {
+      case 'GET':
+        if (request.queryParams) {
           try {
-            // response = await this.recordInteractor.createRecords(request.body.records);
+            const queryData: Partial<Record> = request.queryParams;
+            const limit: number | undefined = queryData.limit
+              ? queryData.limit
+              : undefined;
+            response = await this.recordInteractor.fetchRecords(
+              queryData,
+              queryData.limit,
+              queryData.offset
+            );
           } catch {
-            response = 'Could not insert records';
+            response = 'Invalid query data';
           }
         }
         break;
+
+      case 'POST':
+        if (request.body && request.body.records) {
+          try {
+            const records: Record[] = request.body.records;
+            response = await this.recordInteractor.createRecords(records);
+          } catch {
+            response = 'Invalid records data';
+          }
+        }
+        break;
+
+      case 'PUT':
+        break;
+
+      case 'DELETE':
+        break;
     }
+
     return response;
   }
 }

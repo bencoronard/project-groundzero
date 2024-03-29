@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "dev": "nodemon ./src/main.ts"
+    "dev": "nodemon ./src/test.ts"
   },
   "keywords": [],
   "author": "",
