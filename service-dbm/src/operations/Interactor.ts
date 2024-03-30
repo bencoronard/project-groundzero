@@ -9,16 +9,19 @@ export class Interactor implements RecordInteractor {
     this.recordRepository = injectedRepository;
   }
 
-  async createRecords(recordsToCreate: Record[]): Promise<string> {
-    let operationResult: string;
-    try {
-      const numRecords: number = recordsToCreate.length;
-      const recordBundle: Record[] = await processRecords(recordsToCreate);
-      const insertedRecords: Record[] =
-        await this.recordRepository.createEntries(recordBundle);
-      operationResult = `Number of records created: ${insertedRecords.length} of ${numRecords}`;
-    } catch {
-      operationResult = 'Error creating records';
+  async createRecords(parsedBody: { [key: string]: any }): Promise<string> {
+    let operationResult: string = 'No input records found';
+    if (parsedBody.records) {
+      try {
+        const recordsToCreate: Record[] = parsedBody.records;
+        const numRecords: number = recordsToCreate.length;
+        const recordBundle: Record[] = await processRecords(recordsToCreate);
+        const insertedRecords: Record[] =
+          await this.recordRepository.createEntries(recordBundle);
+        operationResult = `Number of records created: ${insertedRecords.length} of ${numRecords}`;
+      } catch {
+        operationResult = 'Invalid input format';
+      }
     }
     return operationResult;
   }
