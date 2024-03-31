@@ -10,7 +10,7 @@ export class Interactor implements RecordInteractor {
   }
 
   async createRecords(parsedBody: { [key: string]: any }): Promise<string> {
-    let operationResult: string = 'No input records found';
+    let operationResult: string = 'Insuffient input';
     if (parsedBody.records) {
       try {
         const recordsToCreate: Record[] = parsedBody.records;
@@ -45,26 +45,24 @@ export class Interactor implements RecordInteractor {
     return operationResult;
   }
 
-  async fetchRecords(
-    fetchCriteria: Partial<Record>,
-    fetchLimit?: number,
-    fetchOffset?: number
-  ): Promise<string> {
-    let operationResult: string;
+  async fetchRecords(parsedQuery: { [key: string]: any }): Promise<string> {
+    let operationResult: string = 'Insuffient input';
     try {
-      const limit: number =
-        fetchLimit && fetchLimit >= 0
-          ? fetchLimit
+      const fetchCriteria: Partial<Record> = {};
+      const fetchLimit: number =
+        parsedQuery.limit && parsedQuery.limit >= 0
+          ? parsedQuery.limit
           : this.recordRepository.numEntries;
-      const offset: number = fetchOffset && fetchOffset >= 0 ? fetchOffset : 0;
+      const fetchOffset: number =
+        parsedQuery.offset && parsedQuery.offset >= 0 ? parsedQuery.offset : 0;
       const fetchedRecords: Record[] = await this.recordRepository.readEntries(
         fetchCriteria,
-        limit,
-        offset
+        fetchLimit,
+        fetchOffset
       );
       operationResult = JSON.stringify(fetchedRecords);
     } catch {
-      operationResult = 'Error fetching records';
+      operationResult = 'Invalid input format';
     }
     return operationResult;
   }

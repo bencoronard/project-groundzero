@@ -41,10 +41,10 @@ export class InMemoryStorage implements RecordRepository {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
           const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Partial<Record>
+            (key) => key as keyof Record
           );
           const updateKeys = Object.keys(updateValues).map(
-            (key) => key as keyof Partial<Record>
+            (key) => key as keyof Record
           );
           matchKeys.forEach((key) => {
             matched =
@@ -79,7 +79,7 @@ export class InMemoryStorage implements RecordRepository {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
           const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Partial<Record>
+            (key) => key as keyof Record
           );
           matchKeys.forEach((key) => {
             matched =
@@ -110,7 +110,7 @@ export class InMemoryStorage implements RecordRepository {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
           const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Partial<Record>
+            (key) => key as keyof Record
           );
           matchKeys.forEach((key) => {
             matched =
