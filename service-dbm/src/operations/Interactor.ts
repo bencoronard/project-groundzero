@@ -26,17 +26,21 @@ export class Interactor implements RecordInteractor {
     return operationResult;
   }
 
-  async updateRecords(
-    updateCriteria: Partial<Record>,
-    updateValues: Partial<Record>
-  ): Promise<string> {
-    let operationResult: string;
-    try {
-      const updatedRecords: Record[] =
-        await this.recordRepository.updateEntries(updateCriteria, updateValues);
-      operationResult = `Number of records updated: ${updatedRecords.length}`;
-    } catch {
-      operationResult = 'Error updating records';
+  async updateRecords(parsedBody: { [key: string]: any }): Promise<string> {
+    let operationResult: string = 'Insuffient input';
+    if (parsedBody.match && parsedBody.update) {
+      try {
+        const updateCriteria: Partial<Record> = parsedBody.match;
+        const updateValues: Partial<Record> = parsedBody.update;
+        const updatedRecords: Record[] =
+          await this.recordRepository.updateEntries(
+            updateCriteria,
+            updateValues
+          );
+        operationResult = `Number of records updated: ${updatedRecords.length}`;
+      } catch {
+        operationResult = 'Invalid input format';
+      }
     }
     return operationResult;
   }
