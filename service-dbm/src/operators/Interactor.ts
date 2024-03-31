@@ -76,21 +76,28 @@ export class Interactor implements RecordInteractor {
     return operationResult;
   }
 
-  async deleteRecords(
-    deleteCriteria: Partial<Record>,
-    deleteOffset?: number
-  ): Promise<string> {
-    let operationResult: string;
+  async deleteRecords(parsedQuery: { [key: string]: any }): Promise<string> {
+    let operationResult: string = 'Insuffient input';
     try {
-      const offset: number =
-        deleteOffset && deleteOffset >= 0 ? deleteOffset : 0;
+      const excludes: string[] = ['offset'];
+      const deleteCriteria: Partial<Record> = Object.keys(parsedQuery).reduce(
+        (acc, key) => {
+          if (!excludes.includes(key)) {
+            acc[key as keyof Record] = parsedQuery[key];
+          }
+          return acc;
+        },
+        {} as Partial<Record>
+      );
+      const deleteOffset: number =
+        parsedQuery.offset && parsedQuery.offset >= 0 ? parsedQuery.offset : 0;
       const deletedRecords = await this.recordRepository.deleteEntries(
         deleteCriteria,
-        offset
+        deleteOffset
       );
       operationResult = `Number of records deleted: ${deletedRecords.length}`;
     } catch {
-      operationResult = 'Error deleting records';
+      operationResult = 'Invalid input format';
     }
     return operationResult;
   }

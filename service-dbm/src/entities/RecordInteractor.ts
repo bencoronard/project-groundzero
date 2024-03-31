@@ -1,21 +1,11 @@
 import { Record } from './Record';
 
 export interface RecordInteractor {
-  createRecords(recordsToCreate: Record[]): Promise<string>;
+  createRecords(parsedBody: { [key: string]: any }): Promise<string>;
 
-  fetchRecords(
-    fetchCriteria: Partial<Record>,
-    fetchLimit?: number,
-    fetchOffset?: number
-  ): Promise<string>;
+  fetchRecords(parsedQuery: { [key: string]: any }): Promise<string>;
 
-  updateRecords(
-    updateCriteria: Partial<Record>,
-    updateValues: Partial<Record>
-  ): Promise<string>;
+  updateRecords(parsedBody: { [key: string]: any }): Promise<string>;
 
-  deleteRecords(
-    deleteCriteria: Partial<Record>,
-    deleteOffset?: number
-  ): Promise<string>;
+  deleteRecords(parsedQuery: { [key: string]: any }): Promise<string>;
 }
