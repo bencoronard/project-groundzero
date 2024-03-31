@@ -5,15 +5,6 @@ interface Datum {
   field4: any;
 }
 
-const sigma: Datum = {
-  field1: 2,
-  field2: 'Jack',
-  field3: 'Daniel',
-  field4: false,
-};
-
-let pi: Partial<Datum> = {};
-
 const data: { [key: string]: any } = {
   // field1: 1,
   field2: 'John',
@@ -23,16 +14,17 @@ const data: { [key: string]: any } = {
   offset: 5,
 };
 
-Object.keys(data).reduce(
-  (acc, key) => {
-    const field = key as keyof Datum;
-    console.log(acc);
-    if (key in acc) {
-      acc[field] = data[key];
-    }
-    return acc;
-  },
-  { field1: null, field2: null, field3: null, field4: null }
-);
+const excludeAttributes = ['limit', 'offset'];
+
+const abc: Partial<Datum> = Object.keys(data).reduce((acc, key) => {
+  const field = key as keyof Datum;
+  console.log(acc);
+  if (!excludeAttributes.includes(key)) {
+    acc[field] = data[key];
+  }
+  return acc;
+}, {} as Partial<Datum>);
+
+console.log(abc);
 
 console.log('End of execution');

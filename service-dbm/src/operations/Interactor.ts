@@ -48,7 +48,16 @@ export class Interactor implements RecordInteractor {
   async fetchRecords(parsedQuery: { [key: string]: any }): Promise<string> {
     let operationResult: string = 'Insuffient input';
     try {
-      const fetchCriteria: Partial<Record> = {};
+      const excludes: string[] = ['limit', 'offset'];
+      const fetchCriteria: Partial<Record> = Object.keys(parsedQuery).reduce(
+        (acc, key) => {
+          if (!excludes.includes(key)) {
+            acc[key as keyof Record] = parsedQuery[key];
+          }
+          return acc;
+        },
+        {} as Partial<Record>
+      );
       const fetchLimit: number =
         parsedQuery.limit && parsedQuery.limit >= 0
           ? parsedQuery.limit
