@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { ExpressHTTP } from './detachable/ExpressHTTP';
+import { ExpressHTTP } from './detachables/ExpressHTTP';
 
 const PORT: number = 3000;
 
