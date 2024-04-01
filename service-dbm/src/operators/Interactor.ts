@@ -1,6 +1,7 @@
 import { Record } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import { RecordInteractor } from '../entities/RecordInteractor';
+import { ResponseHTTP } from '../entities/ResponseHTTP';
 
 export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
@@ -9,8 +10,14 @@ export class Interactor implements RecordInteractor {
     this.recordRepository = injectedRepository;
   }
 
-  async createRecords(parsedBody: { [key: string]: any }): Promise<string> {
-    let operationResult: string = 'Insuffient input';
+  async createRecords(parsedBody: {
+    [key: string]: any;
+  }): Promise<ResponseHTTP> {
+    const response: ResponseHTTP = {
+      statusCode: 400,
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'Missing inputs',
+    };
     if (parsedBody.records) {
       try {
         const recordsToCreate: Record[] = parsedBody.records;
@@ -18,16 +25,23 @@ export class Interactor implements RecordInteractor {
         const recordBundle: Record[] = await processRecords(recordsToCreate);
         const insertedRecords: Record[] =
           await this.recordRepository.createEntries(recordBundle);
-        operationResult = `Number of records created: ${insertedRecords.length} of ${numRecords}`;
+        response.statusCode = 201;
+        response.body = `Number of records created: ${insertedRecords.length} of ${numRecords}`;
       } catch {
-        operationResult = 'Invalid input format';
+        response.body = 'Invalid input format';
       }
     }
-    return operationResult;
+    return response;
   }
 
-  async updateRecords(parsedBody: { [key: string]: any }): Promise<string> {
-    let operationResult: string = 'Insuffient input';
+  async updateRecords(parsedBody: {
+    [key: string]: any;
+  }): Promise<ResponseHTTP> {
+    const response: ResponseHTTP = {
+      statusCode: 400,
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'Missing inputs',
+    };
     if (parsedBody.match && parsedBody.update) {
       try {
         const updateCriteria: Partial<Record> = parsedBody.match;
@@ -37,16 +51,23 @@ export class Interactor implements RecordInteractor {
             updateCriteria,
             updateValues
           );
-        operationResult = `Number of records updated: ${updatedRecords.length}`;
+        response.statusCode = 200;
+        response.body = `Number of records updated: ${updatedRecords.length}`;
       } catch {
-        operationResult = 'Invalid input format';
+        response.body = 'Invalid input format';
       }
     }
-    return operationResult;
+    return response;
   }
 
-  async fetchRecords(parsedQuery: { [key: string]: any }): Promise<string> {
-    let operationResult: string = 'Insuffient input';
+  async fetchRecords(parsedQuery: {
+    [key: string]: any;
+  }): Promise<ResponseHTTP> {
+    const response: ResponseHTTP = {
+      statusCode: 400,
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'Missing inputs',
+    };
     try {
       const excludes: string[] = ['limit', 'offset'];
       const fetchCriteria: Partial<Record> = Object.keys(parsedQuery).reduce(
@@ -69,15 +90,23 @@ export class Interactor implements RecordInteractor {
         fetchLimit,
         fetchOffset
       );
-      operationResult = JSON.stringify(fetchedRecords);
+      response.statusCode = 200;
+      response.headers = { 'Content-Type': 'application/json' };
+      response.body = JSON.stringify(fetchedRecords);
     } catch {
-      operationResult = 'Invalid input format';
+      response.body = 'Invalid input format';
     }
-    return operationResult;
+    return response;
   }
 
-  async deleteRecords(parsedQuery: { [key: string]: any }): Promise<string> {
-    let operationResult: string = 'Insuffient input';
+  async deleteRecords(parsedQuery: {
+    [key: string]: any;
+  }): Promise<ResponseHTTP> {
+    const response: ResponseHTTP = {
+      statusCode: 400,
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'Missing inputs',
+    };
     try {
       const excludes: string[] = ['offset'];
       const deleteCriteria: Partial<Record> = Object.keys(parsedQuery).reduce(
@@ -95,11 +124,12 @@ export class Interactor implements RecordInteractor {
         deleteCriteria,
         deleteOffset
       );
-      operationResult = `Number of records deleted: ${deletedRecords.length}`;
+      response.statusCode = 200;
+      response.body = `Number of records deleted: ${deletedRecords.length}`;
     } catch {
-      operationResult = 'Invalid input format';
+      response.body = 'Invalid input format';
     }
-    return operationResult;
+    return response;
   }
 }
 

@@ -1,5 +1,6 @@
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { RequestHTTP } from '../entities/RequestHTTP';
+import { ResponseHTTP } from '../entities/ResponseHTTP';
 
 export class Controller {
   private recordInteractor: RecordInteractor;
@@ -8,8 +9,12 @@ export class Controller {
     this.recordInteractor = injectedInteractor;
   }
 
-  async route(request: RequestHTTP): Promise<string> {
-    let response: string = 'Invalid request';
+  async route(request: RequestHTTP): Promise<ResponseHTTP> {
+    let response: ResponseHTTP = {
+      statusCode: 404,
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'Invalid request',
+    };
 
     switch (request.method.toUpperCase()) {
       case 'GET':
