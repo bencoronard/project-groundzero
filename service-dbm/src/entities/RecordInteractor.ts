@@ -1,5 +1,3 @@
-import { Record } from './Record';
-
 export interface RecordInteractor {
   createRecords(parsedBody: { [key: string]: any }): Promise<string>;
 

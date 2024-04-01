@@ -1,4 +1,3 @@
-import { Record } from '../entities/Record';
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { RequestHTTP } from '../entities/RequestHTTP';
 
@@ -15,29 +14,30 @@ export class Controller {
     switch (request.method.toUpperCase()) {
       case 'GET':
         if (request.queryParams) {
-          try {
-            // response = await this.recordInteractor.fetchRecords();
-          } catch {
-            response = 'Invalid query data';
-          }
+          response = await this.recordInteractor.fetchRecords(
+            request.queryParams
+          );
         }
         break;
 
       case 'POST':
-        if (request.body && request.body.records) {
-          try {
-            const records: Record[] = request.body.records;
-            response = await this.recordInteractor.createRecords(records);
-          } catch {
-            response = 'Invalid records data';
-          }
+        if (request.body) {
+          response = await this.recordInteractor.createRecords(request.body);
         }
         break;
 
       case 'PUT':
+        if (request.body) {
+          response = await this.recordInteractor.updateRecords(request.body);
+        }
         break;
 
       case 'DELETE':
+        if (request.queryParams) {
+          response = await this.recordInteractor.deleteRecords(
+            request.queryParams
+          );
+        }
         break;
     }
 
