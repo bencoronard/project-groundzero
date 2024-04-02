@@ -1,37 +1,23 @@
-import { ResponseHTTP } from './entities/ResponseHTTP';
-interface Datum {
-  field1: any;
-  field2: any;
-  field3: any;
-  field4: any;
-}
+import axios from 'axios';
 
-const data: { [key: string]: any } = {
-  // field1: 1,
-  field2: 'John',
-  field3: 'Doe',
-  // field4: true,
-  limit: 30,
-  offset: 5,
+// Define the base URL and query parameters
+const baseUrl = 'http://localhost:3000/records';
+const queryParams = {
+  // field1: 'abc',
+  // field2: 'def',
+  // field3: 'duelist',
+  field4: 'US',
+  offset: 0,
 };
 
-const excludeAttributes = ['limit', 'offset'];
+const data = { match: { field2: 'Chamber' }, update: { field4: 'Kingdom' } };
 
-const abc: Partial<Datum> = Object.keys(data).reduce((acc, key) => {
-  const field = key as keyof Datum;
-  if (!excludeAttributes.includes(key)) {
-    acc[field] = data[key];
-  }
-  return acc;
-}, {} as Partial<Datum>);
-
-console.log(abc);
-console.log(JSON.stringify([abc, data]));
-
-console.log('End of execution');
-
-const response: ResponseHTTP = {
-  statusCode: 400,
-  headers: { 'Content-Type': 'text/plain' },
-  body: 'Insuffient input',
-};
+// Use axios to send the GET request with query parameters
+axios
+  .put(baseUrl, data)
+  .then((response) => {
+    console.log('Response:', response);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });

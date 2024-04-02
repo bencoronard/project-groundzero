@@ -5,19 +5,21 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "dev": "nodemon ./src/test.ts"
+    "dev": "nodemon ./src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^20.11.30",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   },
   "dependencies": {
-    "@types/express": "^4.17.21",
-    "express": "^4.19.2"
+    "axios": "^1.6.8",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.3"
   }
 }
