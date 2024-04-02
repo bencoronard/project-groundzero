@@ -37,15 +37,15 @@ export class InMemoryStorage implements RecordRepository {
       const updatedRecords: Record[] = [];
       try {
         let searchIndex: number = 0;
+        const matchKeys = Object.keys(matchCriteria).map(
+          (key) => key as keyof Record
+        );
+        const updateKeys = Object.keys(updateValues).map(
+          (key) => key as keyof Record
+        );
         while (searchIndex < this.numEntries) {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
-          const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Record
-          );
-          const updateKeys = Object.keys(updateValues).map(
-            (key) => key as keyof Record
-          );
           matchKeys.forEach((key) => {
             matched =
               currentRecord[key] === matchCriteria[key] ? matched : false;
@@ -73,14 +73,14 @@ export class InMemoryStorage implements RecordRepository {
     return new Promise((resolve, reject) => {
       const retrievedRecords: Record[] = [];
       try {
+        const matchKeys = Object.keys(matchCriteria).map(
+          (key) => key as keyof Record
+        );
         let numMatched: number = 0;
         let searchIndex: number = matchOffset;
         while (numMatched < matchLimit && searchIndex < this.numEntries) {
           let matched: boolean = true;
           const currentRecord: Record = this.storedRecords[searchIndex];
-          const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Record
-          );
           matchKeys.forEach((key) => {
             matched =
               currentRecord[key] === matchCriteria[key] ? matched : false;

@@ -17,7 +17,8 @@ app.use(express.urlencoded({ extended: false }));
 app.all('/records*', async (req, res) => {
   const reqHTTP = new ExpressHTTP(req);
   const resHTTP = await controller.route(reqHTTP);
-  res.status(resHTTP.statusCode).set(resHTTP.headers);
+  res.status(resHTTP.statusCode);
+  res.set(resHTTP.headers);
   res.send(resHTTP.body);
   db.showRecords();
 });
