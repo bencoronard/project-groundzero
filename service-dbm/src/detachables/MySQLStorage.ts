@@ -1,30 +1,43 @@
 import { RecordRepository } from '../entities/RecordRepository';
 import { Record } from '../entities/Record';
-import mysql, { Pool, RowDataPacket } from 'mysql2';
+import mysql, { Pool } from 'mysql2/promise';
 
-export class MySQLStorage implements RecordRepository {
-  private pool;
-  constructor() {
-    this.pool = mysql
-      .createPool({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'valorantDB',
-      })
-      .promise();
+// export class MySQLStorage implements RecordRepository {
+export class MySQLStorage {
+  private pool: Pool;
+  private dbName: string;
+  private tableName: string;
+  constructor(config: { [key: string]: string }, table: string) {
+    this.pool = mysql.createPool({
+      host: config.host,
+      user: config.user,
+      password: config.password,
+      database: config.database,
+    });
+    this.dbName = config.database;
+    this.tableName = table;
   }
 
   async readEntries(
     matchCriteria: Partial<Record>,
-    matchLimit?: number | undefined,
-    matchOffset?: number | undefined
+    matchLimit: number,
+    matchOffset: number
   ): Promise<Record[]> {
+    let conditions: string = '';
+    const matchValues: any[] = [];
+    Object.keys(matchCriteria).forEach((key) => {
+      conditions += key + ' = ' + '?' + ' AND ';
+      matchValues.push(matchCriteria[key as keyof Record]);
+    });
+    conditions = conditions.slice(0, -5);
     const [rows] = await this.pool.query(`
-    SELECT *
-    FROM agents
-    WHERE 
+      SELECT field1, field2, field3, field4
+      FROM \`${this.dbName}\`.\`${this.tableName}\`
+      WHERE ${conditions}
+      LIMIT ${matchLimit}
+      OFFSET ${matchOffset};
     `);
+    return rows as Record[];
   }
 
   // async createUser(user: User): Promise<User> {

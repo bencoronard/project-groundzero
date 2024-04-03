@@ -80,9 +80,7 @@ export class Interactor implements RecordInteractor {
         {} as Partial<Record>
       );
       const fetchLimit: number =
-        parsedQuery.limit && parsedQuery.limit >= 0
-          ? parsedQuery.limit
-          : this.recordRepository.numEntries;
+        parsedQuery.limit && parsedQuery.limit >= 0 ? parsedQuery.limit : 100;
       const fetchOffset: number =
         parsedQuery.offset && parsedQuery.offset >= 0 ? parsedQuery.offset : 0;
       const fetchedRecords: Record[] = await this.recordRepository.readEntries(
