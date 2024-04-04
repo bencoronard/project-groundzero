@@ -1,9 +1,10 @@
-import fs from 'fs';
-import mysql, { Pool, PoolOptions, ResultSetHeader } from 'mysql2/promise';
+import * as fs from 'fs';
+import * as mysql from 'mysql2/promise';
+
 import { Record } from './entities/Record';
 
 // Database connection details
-const dbConfig: PoolOptions = {
+const dbConfig: mysql.PoolOptions = {
   host: 'localhost',
   user: 'root',
   password: '1234',
@@ -11,7 +12,7 @@ const dbConfig: PoolOptions = {
 };
 
 // Create a connection pool
-const pool: Pool = mysql.createPool(dbConfig);
+const pool: mysql.Pool = mysql.createPool(dbConfig);
 
 // Read JSON file
 const data: Buffer = fs.readFileSync('./src/agents.json');
@@ -33,9 +34,8 @@ async function insertRecords(): Promise<void> {
       record.field4,
     ]);
 
-    const [rows] = await connection.query<ResultSetHeader>(insertQuery, [
-      values,
-    ]);
+    const result = await connection.query(insertQuery, [values]);
+    const rows = result[0] as mysql.ResultSetHeader;
 
     console.log('Inserted', rows.affectedRows, 'records into database.');
   } catch (error) {
@@ -45,6 +45,11 @@ async function insertRecords(): Promise<void> {
       connection.release();
       console.log('Disconnected from database.');
     }
+  }
+
+  if (pool) {
+    await pool.end();
+    console.log('Connection pool closed');
   }
 }
 
