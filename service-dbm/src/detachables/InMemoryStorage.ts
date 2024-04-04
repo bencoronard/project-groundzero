@@ -14,19 +14,26 @@ export class InMemoryStorage implements RecordRepository {
   }
 
   async createEntries(recordsToInsert: Record[]): Promise<Record[]> {
-    return new Promise((resolve, reject) => {
-      const insertedRecords: Record[] = [];
-      try {
-        recordsToInsert.forEach((record) => {
+    const promises: Promise<void>[] = [];
+
+    recordsToInsert.forEach((record) => {
+      const insertPromise = new Promise<void>((resolve, reject) => {
+        try {
           this.storedRecords.push(record);
           this.numEntries++;
-          insertedRecords.push(record);
-        });
-        resolve(insertedRecords);
-      } catch {
-        reject(insertedRecords);
-      }
+          resolve();
+        } catch {
+          reject();
+        }
+      });
+      promises.push(insertPromise);
     });
+
+    const operationResults = await Promise.allSettled(promises);
+    const slice = operationResults.map((result) =>
+      result.status === 'fulfilled' ? true : false
+    );
+    return recordsToInsert.filter((element, index) => slice[index]);
   }
 
   async updateEntries(
@@ -85,6 +92,10 @@ export class InMemoryStorage implements RecordRepository {
             matched =
               currentRecord[key] === matchCriteria[key] ? matched : false;
           });
+          // const checkArray: boolean[] = matchKeys.map((key) =>
+          //   currentRecord[key] === matchCriteria[key] ? true : false
+          // );
+          // const check: boolean = checkArray.every(Boolean);
           if (matched) {
             retrievedRecords.push(currentRecord);
             numMatched++;

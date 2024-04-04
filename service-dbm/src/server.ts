@@ -15,12 +15,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.all('/records*', async (req, res) => {
-  const reqHTTP = new ExpressHTTP(req);
-  const resHTTP = await controller.route(reqHTTP);
-  res.status(resHTTP.statusCode);
-  res.set(resHTTP.headers);
-  res.send(resHTTP.body);
-  db.showRecords();
+  try {
+    const reqHTTP = new ExpressHTTP(req);
+    const resHTTP = await controller.route(reqHTTP);
+    res.status(resHTTP.statusCode);
+    res.set(resHTTP.headers);
+    res.send(resHTTP.body);
+    db.showRecords();
+  } catch (error) {
+    res.status(500).send('Error processing the request');
+  }
 });
 
 app.listen(PORT, () => {

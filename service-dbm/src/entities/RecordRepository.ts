@@ -1,7 +1,5 @@
 import { Record } from './Record';
 export interface RecordRepository {
-  numEntries: number;
-
   createEntries(recordsToInsert: Record[]): Promise<Record[]>;
 
   readEntries(

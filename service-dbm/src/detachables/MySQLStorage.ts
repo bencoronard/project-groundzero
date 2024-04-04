@@ -1,12 +1,11 @@
 import { RecordRepository } from '../entities/RecordRepository';
 import { Record } from '../entities/Record';
-import mysql, { Pool } from 'mysql2/promise';
+import * as mysql from 'mysql2/promise';
 
-// export class MySQLStorage implements RecordRepository {
-export class MySQLStorage {
-  private pool: Pool;
-  private dbName: string;
-  private tableName: string;
+export class MySQLStorage implements RecordRepository {
+  private pool: mysql.Pool;
+  private database: string;
+  private table: string;
   constructor(config: { [key: string]: string }, table: string) {
     this.pool = mysql.createPool({
       host: config.host,
@@ -14,8 +13,8 @@ export class MySQLStorage {
       password: config.password,
       database: config.database,
     });
-    this.dbName = config.database;
-    this.tableName = table;
+    this.database = config.database;
+    this.table = table;
   }
 
   async readEntries(
@@ -23,21 +22,53 @@ export class MySQLStorage {
     matchLimit: number,
     matchOffset: number
   ): Promise<Record[]> {
+    // String manipulation
     let conditions: string = '';
-    const matchValues: any[] = [];
+    const values: any[] = [];
     Object.keys(matchCriteria).forEach((key) => {
       conditions += key + ' = ' + '?' + ' AND ';
-      matchValues.push(matchCriteria[key as keyof Record]);
+      values.push(matchCriteria[key as keyof Record]);
     });
     conditions = conditions.slice(0, -5);
-    const [rows] = await this.pool.query(`
-      SELECT field1, field2, field3, field4
-      FROM \`${this.dbName}\`.\`${this.tableName}\`
-      WHERE ${conditions}
-      LIMIT ${matchLimit}
-      OFFSET ${matchOffset};
-    `);
+
+    // Query
+    const connection = await this.pool.getConnection();
+    const [rows] = await connection.query(
+      `
+        SELECT field1, field2, field3, field4
+        FROM \`${this.database}\`.\`${this.table}\`
+        WHERE ${conditions}
+        LIMIT ${matchLimit}
+        OFFSET ${matchOffset};
+      `,
+      values
+    );
+    connection.release();
     return rows as Record[];
+  }
+
+  async createEntries(recordsToInsert: Record[]): Promise<Record[]> {
+    return [
+      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+    ];
+  }
+
+  async updateEntries(
+    matchCriteria: Partial<Record>,
+    updateValues: Partial<Record>
+  ): Promise<Record[]> {
+    return [
+      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+    ];
+  }
+
+  async deleteEntries(
+    matchCriteria: Partial<Record>,
+    matchOffset?: number | undefined
+  ): Promise<Record[]> {
+    return [
+      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+    ];
   }
 
   // async createUser(user: User): Promise<User> {
