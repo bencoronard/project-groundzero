@@ -21,13 +21,11 @@ app.all('/records*', async (req, res) => {
     res.status(resHTTP.statusCode);
     res.set(resHTTP.headers);
     res.send(resHTTP.body);
-    db.showRecords();
   } catch (error) {
-    res.status(500).send('Error processing the request');
+    res.status(500).send(error);
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
-  db.showRecords();
 });

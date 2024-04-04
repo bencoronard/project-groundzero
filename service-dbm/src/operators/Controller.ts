@@ -10,13 +10,12 @@ export class Controller {
   }
 
   async route(request: RequestHTTP): Promise<ResponseHTTP> {
-    let response: ResponseHTTP = {
-      statusCode: 404,
-      headers: { 'Content-Type': 'text/plain' },
-      body: 'Invalid request',
-    };
-
     try {
+      let response: ResponseHTTP = {
+        statusCode: 400,
+        headers: { 'Content-Type': 'text/plain' },
+        body: 'Invalid request',
+      };
       switch (request.method.toUpperCase()) {
         case 'GET':
           if (request.queryParams) {
@@ -46,11 +45,9 @@ export class Controller {
           }
           break;
       }
-    } catch {
-      response.statusCode = 500;
-      response.body = 'Could not complete the requested operation';
+      return response;
+    } catch (error) {
+      throw error;
     }
-
-    return response;
   }
 }

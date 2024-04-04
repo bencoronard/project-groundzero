@@ -2,6 +2,7 @@ import { Record } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { ResponseHTTP } from '../entities/ResponseHTTP';
+import { rejects } from 'assert';
 
 export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
@@ -13,25 +14,27 @@ export class Interactor implements RecordInteractor {
   async createRecords(parsedBody: {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
-    const response: ResponseHTTP = {
-      statusCode: 400,
-      headers: { 'Content-Type': 'text/plain' },
-      body: 'Missing inputs',
-    };
     if (parsedBody.records) {
       try {
-        const recordsToCreate: Record[] = parsedBody.records;
+        const recordsToCreate: Record[] = await parseRecords(
+          parsedBody.records
+        );
         const numRecords: number = recordsToCreate.length;
         const recordBundle: Record[] = await processRecords(recordsToCreate);
         const insertedRecords: Record[] =
           await this.recordRepository.createEntries(recordBundle);
-        response.statusCode = 201;
-        response.body = `Number of records created: ${insertedRecords.length} of ${numRecords}`;
-      } catch {
-        response.body = 'Invalid input format';
+        const response: ResponseHTTP = {
+          statusCode: 201,
+          headers: { 'Content-Type': 'text/plain' },
+          body: `Number of records created: ${insertedRecords.length} of ${numRecords}`,
+        };
+        return response;
+      } catch (error) {
+        throw error;
       }
+    } else {
+      throw new Error('Missing inputs');
     }
-    return response;
   }
 
   async updateRecords(parsedBody: {
@@ -132,20 +135,39 @@ export class Interactor implements RecordInteractor {
 }
 
 async function processRecords(records: Record[]): Promise<Record[]> {
-  return new Promise((resolve, reject) => {
+  try {
     const processedRecords: Record[] = [];
-    try {
-      records.forEach((record) => {
-        processedRecords.push({
-          field1: record.field1,
-          field2: record.field2,
-          field3: record.field3,
-          field4: record.field4,
-        });
+    records.forEach((record) => {
+      processedRecords.push({
+        field1: record.field1,
+        field2: record.field2,
+        field3: record.field3,
+        field4: record.field4,
       });
-      resolve(processedRecords);
-    } catch {
-      reject(processedRecords);
+    });
+    return processedRecords;
+  } catch {
+    throw new Error('Could not process records');
+  }
+}
+
+async function parseRecords(input: any[]): Promise<Record[]> {
+  try {
+    const parsedRecords: Record[] = [];
+    for (const item of input) {
+      if (
+        typeof item.field1 === 'number' &&
+        typeof item.field2 === 'string' &&
+        typeof item.field3 === 'string' &&
+        typeof item.field4 === 'string'
+      ) {
+        parsedRecords.push(item);
+      } else {
+        throw new Error('Could not parse inputs');
+      }
     }
-  });
+    return parsedRecords;
+  } catch (error) {
+    throw error;
+  }
 }
