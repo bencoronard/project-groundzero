@@ -24,8 +24,12 @@ export class MySQLStorage implements RecordRepository {
   ): Promise<IRecord[]> {
     let connection;
     try {
-      const { conditions, values } = await parseConditions(matchCriteria);
-      connection = await this.pool.getConnection();
+      const [parsedConditions, conn] = await Promise.all([
+        parseConditions(matchCriteria),
+        this.pool.getConnection(),
+      ]);
+      const { conditions, values } = parsedConditions;
+      connection = conn;
       const [rows] = await connection.query(
         `
         SELECT ${Record.getAttributes().join(', ')}
@@ -47,9 +51,20 @@ export class MySQLStorage implements RecordRepository {
   }
 
   async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
-    return [
-      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
-    ];
+    let connection;
+    try {
+      const [conn] = await Promise.all([this.pool.getConnection()]);
+      connection = conn;
+      return [
+        { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+      ];
+    } catch (error) {
+      throw error;
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
   }
 
   async updateEntries(
