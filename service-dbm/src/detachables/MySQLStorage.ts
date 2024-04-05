@@ -1,30 +1,74 @@
 import { RecordRepository } from '../entities/RecordRepository';
-import { Record } from '../entities/Record';
-import mysql, { Pool, RowDataPacket } from 'mysql2';
+import { IRecord } from '../entities/Record';
+import * as mysql from 'mysql2/promise';
 
 export class MySQLStorage implements RecordRepository {
-  private pool;
-  constructor() {
-    this.pool = mysql
-      .createPool({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'valorantDB',
-      })
-      .promise();
+  private pool: mysql.Pool;
+  private database: string;
+  private table: string;
+  constructor(config: { [key: string]: string }, table: string) {
+    this.pool = mysql.createPool({
+      host: config.host,
+      user: config.user,
+      password: config.password,
+      database: config.database,
+    });
+    this.database = config.database;
+    this.table = table;
   }
 
   async readEntries(
-    matchCriteria: Partial<Record>,
-    matchLimit?: number | undefined,
+    matchCriteria: Partial<IRecord>,
+    matchLimit: number,
+    matchOffset: number
+  ): Promise<IRecord[]> {
+    // String manipulation
+    let conditions: string = '';
+    const values: any[] = [];
+    Object.keys(matchCriteria).forEach((key) => {
+      conditions += key + ' = ' + '?' + ' AND ';
+      values.push(matchCriteria[key as keyof IRecord]);
+    });
+    conditions = conditions.slice(0, -5);
+
+    // Query
+    const connection = await this.pool.getConnection();
+    const [rows] = await connection.query(
+      `
+        SELECT field1, field2, field3, field4
+        FROM \`${this.database}\`.\`${this.table}\`
+        WHERE ${conditions}
+        LIMIT ${matchLimit}
+        OFFSET ${matchOffset};
+      `,
+      values
+    );
+    connection.release();
+    return rows as IRecord[];
+  }
+
+  async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
+    return [
+      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+    ];
+  }
+
+  async updateEntries(
+    matchCriteria: Partial<IRecord>,
+    updateValues: Partial<IRecord>
+  ): Promise<IRecord[]> {
+    return [
+      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+    ];
+  }
+
+  async deleteEntries(
+    matchCriteria: Partial<IRecord>,
     matchOffset?: number | undefined
-  ): Promise<Record[]> {
-    const [rows] = await this.pool.query(`
-    SELECT *
-    FROM agents
-    WHERE 
-    `);
+  ): Promise<IRecord[]> {
+    return [
+      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
+    ];
   }
 
   // async createUser(user: User): Promise<User> {
