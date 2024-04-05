@@ -103,10 +103,8 @@ export class Interactor implements RecordInteractor {
       );
       const deleteOffset: number =
         parsedQuery.offset && parsedQuery.offset >= 0 ? parsedQuery.offset : 0;
-      const deletedRecords = await this.recordRepository.deleteEntries(
-        deleteCriteria,
-        deleteOffset
-      );
+      const deletedRecords: IRecord[] =
+        await this.recordRepository.deleteEntries(deleteCriteria, deleteOffset);
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'text/plain' },

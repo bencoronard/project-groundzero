@@ -22,29 +22,28 @@ export class MySQLStorage implements RecordRepository {
     matchLimit: number,
     matchOffset: number
   ): Promise<IRecord[]> {
-    // String manipulation
-    let conditions: string = '';
-    const values: any[] = [];
-    Object.keys(matchCriteria).forEach((key) => {
-      conditions += key + ' = ' + '?' + ' AND ';
-      values.push(matchCriteria[key as keyof IRecord]);
-    });
-    conditions = conditions.slice(0, -5);
-
-    // Query
-    const connection = await this.pool.getConnection();
-    const [rows] = await connection.query(
-      `
+    let connection;
+    try {
+      const { conditions, values } = await parseConditions(matchCriteria);
+      connection = await this.pool.getConnection();
+      const [rows] = await connection.query(
+        `
         SELECT field1, field2, field3, field4
         FROM \`${this.database}\`.\`${this.table}\`
         WHERE ${conditions}
         LIMIT ${matchLimit}
         OFFSET ${matchOffset};
       `,
-      values
-    );
-    connection.release();
-    return rows as IRecord[];
+        values
+      );
+      return rows as IRecord[];
+    } catch (error) {
+      throw error;
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
   }
 
   async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
@@ -108,4 +107,21 @@ export class MySQLStorage implements RecordRepository {
   //   }
   //   return null;
   // }
+}
+
+async function parseConditions(input: {
+  [key: string]: any;
+}): Promise<{ [key: string]: string | any[] }> {
+  try {
+    let parsedConditions: string = '';
+    const parsedValues: any[] = [];
+    Object.keys(input).forEach((key) => {
+      parsedConditions += key + ' = ' + '?' + ' AND ';
+      parsedValues.push(input[key as keyof IRecord]);
+    });
+    parsedConditions = parsedConditions.slice(0, -5);
+    return { conditions: parsedConditions, values: parsedValues };
+  } catch {
+    throw new Error('Error parsing query conditions');
+  }
 }
