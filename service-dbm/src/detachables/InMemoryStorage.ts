@@ -1,10 +1,10 @@
 import { readFileSync } from 'fs';
-import { Record } from '../entities/Record';
+import { IRecord } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import path from 'path';
 
 export class InMemoryStorage implements RecordRepository {
-  private storedRecords: Record[];
+  private storedRecords: IRecord[];
   public numEntries: number;
   constructor() {
     this.storedRecords = JSON.parse(
@@ -13,7 +13,7 @@ export class InMemoryStorage implements RecordRepository {
     this.numEntries = this.storedRecords.length;
   }
 
-  async createEntries(recordsToInsert: Record[]): Promise<Record[]> {
+  async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
     const promises: Promise<void>[] = [];
 
     recordsToInsert.forEach((record) => {
@@ -37,22 +37,22 @@ export class InMemoryStorage implements RecordRepository {
   }
 
   async updateEntries(
-    matchCriteria: Partial<Record>,
-    updateValues: Partial<Record>
-  ): Promise<Record[]> {
+    matchCriteria: Partial<IRecord>,
+    updateValues: Partial<IRecord>
+  ): Promise<IRecord[]> {
     return new Promise((resolve, reject) => {
-      const updatedRecords: Record[] = [];
+      const updatedRecords: IRecord[] = [];
       try {
         let searchIndex: number = 0;
         const matchKeys = Object.keys(matchCriteria).map(
-          (key) => key as keyof Record
+          (key) => key as keyof IRecord
         );
         const updateKeys = Object.keys(updateValues).map(
-          (key) => key as keyof Record
+          (key) => key as keyof IRecord
         );
         while (searchIndex < this.numEntries) {
           let matched: boolean = true;
-          const currentRecord: Record = this.storedRecords[searchIndex];
+          const currentRecord: IRecord = this.storedRecords[searchIndex];
           matchKeys.forEach((key) => {
             matched =
               currentRecord[key] === matchCriteria[key] ? matched : false;
@@ -73,21 +73,21 @@ export class InMemoryStorage implements RecordRepository {
   }
 
   async readEntries(
-    matchCriteria: Partial<Record>,
+    matchCriteria: Partial<IRecord>,
     matchLimit: number,
     matchOffset: number
-  ): Promise<Record[]> {
+  ): Promise<IRecord[]> {
     return new Promise((resolve, reject) => {
-      const retrievedRecords: Record[] = [];
+      const retrievedRecords: IRecord[] = [];
       try {
         const matchKeys = Object.keys(matchCriteria).map(
-          (key) => key as keyof Record
+          (key) => key as keyof IRecord
         );
         let numMatched: number = 0;
         let searchIndex: number = matchOffset;
         while (numMatched < matchLimit && searchIndex < this.numEntries) {
           let matched: boolean = true;
-          const currentRecord: Record = this.storedRecords[searchIndex];
+          const currentRecord: IRecord = this.storedRecords[searchIndex];
           matchKeys.forEach((key) => {
             matched =
               currentRecord[key] === matchCriteria[key] ? matched : false;
@@ -110,18 +110,18 @@ export class InMemoryStorage implements RecordRepository {
   }
 
   async deleteEntries(
-    matchCriteria: Partial<Record>,
+    matchCriteria: Partial<IRecord>,
     matchOffset: number
-  ): Promise<Record[]> {
+  ): Promise<IRecord[]> {
     return new Promise((resolve, reject) => {
-      const deletedRecords: Record[] = [];
+      const deletedRecords: IRecord[] = [];
       try {
         let searchIndex: number = matchOffset;
         while (searchIndex < this.numEntries) {
           let matched: boolean = true;
-          const currentRecord: Record = this.storedRecords[searchIndex];
+          const currentRecord: IRecord = this.storedRecords[searchIndex];
           const matchKeys = Object.keys(matchCriteria).map(
-            (key) => key as keyof Record
+            (key) => key as keyof IRecord
           );
           matchKeys.forEach((key) => {
             matched =

@@ -1,5 +1,5 @@
 import { RecordRepository } from '../entities/RecordRepository';
-import { Record } from '../entities/Record';
+import { IRecord } from '../entities/Record';
 import * as mysql from 'mysql2/promise';
 
 export class MySQLStorage implements RecordRepository {
@@ -18,16 +18,16 @@ export class MySQLStorage implements RecordRepository {
   }
 
   async readEntries(
-    matchCriteria: Partial<Record>,
+    matchCriteria: Partial<IRecord>,
     matchLimit: number,
     matchOffset: number
-  ): Promise<Record[]> {
+  ): Promise<IRecord[]> {
     // String manipulation
     let conditions: string = '';
     const values: any[] = [];
     Object.keys(matchCriteria).forEach((key) => {
       conditions += key + ' = ' + '?' + ' AND ';
-      values.push(matchCriteria[key as keyof Record]);
+      values.push(matchCriteria[key as keyof IRecord]);
     });
     conditions = conditions.slice(0, -5);
 
@@ -44,28 +44,28 @@ export class MySQLStorage implements RecordRepository {
       values
     );
     connection.release();
-    return rows as Record[];
+    return rows as IRecord[];
   }
 
-  async createEntries(recordsToInsert: Record[]): Promise<Record[]> {
+  async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
     return [
       { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
     ];
   }
 
   async updateEntries(
-    matchCriteria: Partial<Record>,
-    updateValues: Partial<Record>
-  ): Promise<Record[]> {
+    matchCriteria: Partial<IRecord>,
+    updateValues: Partial<IRecord>
+  ): Promise<IRecord[]> {
     return [
       { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
     ];
   }
 
   async deleteEntries(
-    matchCriteria: Partial<Record>,
+    matchCriteria: Partial<IRecord>,
     matchOffset?: number | undefined
-  ): Promise<Record[]> {
+  ): Promise<IRecord[]> {
     return [
       { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
     ];

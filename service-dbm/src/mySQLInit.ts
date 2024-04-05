@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as mysql from 'mysql2/promise';
 
-import { Record } from './entities/Record';
+import { IRecord } from './entities/Record';
 
 // Database connection details
 const dbConfig: mysql.PoolOptions = {
@@ -16,7 +16,7 @@ const pool: mysql.Pool = mysql.createPool(dbConfig);
 
 // Read JSON file
 const data: Buffer = fs.readFileSync('./src/agents.json');
-const records: Record[] = JSON.parse(data.toString());
+const records: IRecord[] = JSON.parse(data.toString());
 
 // Insert records into database
 async function insertRecords(): Promise<void> {
