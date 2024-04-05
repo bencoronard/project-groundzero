@@ -22,7 +22,7 @@ app.all('/records*', async (req, res) => {
     res.set(resHTTP.headers);
     res.send(resHTTP.body);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send((error as Error).message);
   }
 });
 

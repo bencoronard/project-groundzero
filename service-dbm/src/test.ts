@@ -20,8 +20,8 @@ const baseUrl = 'http://localhost:3000/records';
 const queryParams = {
   // field1: 'abc',
   // field2: 'def',
-  field3: 'duelist',
-  field4: 'KR',
+  // field3: 'duelist',
+  // field4: 'KR',
   limit: 100,
   offset: 0,
 };
@@ -90,14 +90,14 @@ const data = {
 //     console.log('End of error');
 //   });
 
-axios
-  .post(baseUrl, data)
-  .then((response) => {
-    console.log('Response:', response.data);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+// axios
+//   .post(baseUrl, data)
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error);
+//   });
 
 axios
   .get(baseUrl, { params: queryParams })
@@ -105,5 +105,5 @@ axios
     console.log('Response:', response.data);
   })
   .catch((error) => {
-    console.error('Error:', error);
+    console.error('Error:', error.response.data);
   });
