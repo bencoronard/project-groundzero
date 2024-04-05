@@ -1,5 +1,5 @@
 import { RecordRepository } from '../entities/RecordRepository';
-import { IRecord } from '../entities/Record';
+import { Record, IRecord } from '../entities/Record';
 import * as mysql from 'mysql2/promise';
 
 export class MySQLStorage implements RecordRepository {
@@ -28,7 +28,7 @@ export class MySQLStorage implements RecordRepository {
       connection = await this.pool.getConnection();
       const [rows] = await connection.query(
         `
-        SELECT field1, field2, field3, field4
+        SELECT ${Record.getAttributes().join(', ')}
         FROM \`${this.database}\`.\`${this.table}\`
         WHERE ${conditions}
         LIMIT ${matchLimit}
