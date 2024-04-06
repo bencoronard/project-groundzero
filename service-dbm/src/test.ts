@@ -70,6 +70,11 @@ const baseUrl = 'http://localhost:3000/records';
 //   offset: 0,
 // };
 
+const dData = {
+  match: { field4: 'TH' },
+  update: { field3: 'Sawasdee' },
+};
+
 const data = {
   records: [
     {
@@ -108,14 +113,14 @@ const data = {
 //     console.error('Error:', error.response.data);
 //   });
 
-// axios
-//   .post(baseUrl, data)
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error.response.data);
-//   });
+axios
+  .post(baseUrl, data)
+  .then((response) => {
+    console.log('Response:', response.data);
+  })
+  .catch((error) => {
+    console.error('Error:', error.response.data);
+  });
 
 const queryParams = {
   // field1: 'abc',
@@ -126,31 +131,37 @@ const queryParams = {
   offset: 0,
 };
 
-axios
-  .get(baseUrl, { params: queryParams })
-  .then((response) => {
-    console.log('Response:', response.data);
-  })
-  .catch((error) => {
-    console.error('Error:', error.response.data);
-  });
+// axios
+//   .get(baseUrl, { params: queryParams })
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error.response.data);
+//   });
 
-axios
-  .delete(baseUrl, { params: queryParams })
-  .then((response) => {
-    console.log('Response:', response.data);
-  })
-  .catch((error) => {
-    console.error('Error:', error.response.data);
-  });
+// axios
+//   .delete(baseUrl, { params: queryParams })
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error.response.data);
+//   });
 
-axios
-  .get(baseUrl, { params: queryParams })
-  .then((response) => {
-    console.log('Response:', response.data);
-  })
-  .catch((error) => {
-    console.error('Error:', error.response.data);
-  });
-
-console.log(['a', 'b'].concat(['1', '2']));
+// axios
+//   .get(baseUrl, { params: queryParams })
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error.response.data);
+//   });
+// axios
+//   .put(baseUrl, dData)
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error.response.data);
+//   });
