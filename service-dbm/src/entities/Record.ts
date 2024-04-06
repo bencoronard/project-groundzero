@@ -71,4 +71,8 @@ export class Record {
       throw new Error('Could not process records');
     }
   }
+
+  static getAttributes(): string[] {
+    return ['field1', 'field2', 'field3', 'field4'];
+  }
 }

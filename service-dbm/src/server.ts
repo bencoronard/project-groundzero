@@ -1,13 +1,21 @@
 import express from 'express';
 import { ExpressHTTP } from './detachables/ExpressHTTP';
-import { InMemoryStorage } from './detachables/InMemoryStorage';
+import { MySQLStorage } from './detachables/MySQLStorage';
 import { Interactor } from './operators/Interactor';
 import { Controller } from './operators/Controller';
 
 const PORT: number = 3000;
 const app = express();
 
-const db = new InMemoryStorage();
+const config = {
+  host: 'localhost',
+  user: 'root',
+  password: '1234',
+  database: 'valorant',
+};
+const table = 'agents';
+const db = new MySQLStorage(config, table);
+
 const interactor = new Interactor(db);
 const controller = new Controller(interactor);
 

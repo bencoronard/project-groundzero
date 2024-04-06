@@ -13,7 +13,7 @@ export class InMemoryStorage implements RecordRepository {
     this.numEntries = this.storedRecords.length;
   }
 
-  async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
+  async createEntries(recordsToInsert: IRecord[]): Promise<number> {
     const promises: Promise<void>[] = [];
 
     recordsToInsert.forEach((record) => {
@@ -30,16 +30,15 @@ export class InMemoryStorage implements RecordRepository {
     });
 
     const operationResults = await Promise.allSettled(promises);
-    const slice = operationResults.map((result) =>
-      result.status === 'fulfilled' ? true : false
-    );
-    return recordsToInsert.filter((element, index) => slice[index]);
+    return operationResults.filter((result) => {
+      result.status === 'fulfilled';
+    }).length;
   }
 
   async updateEntries(
     matchCriteria: Partial<IRecord>,
     updateValues: Partial<IRecord>
-  ): Promise<IRecord[]> {
+  ): Promise<number> {
     return new Promise((resolve, reject) => {
       const updatedRecords: IRecord[] = [];
       try {
@@ -112,7 +111,7 @@ export class InMemoryStorage implements RecordRepository {
   async deleteEntries(
     matchCriteria: Partial<IRecord>,
     matchOffset: number
-  ): Promise<IRecord[]> {
+  ): Promise<number> {
     return new Promise((resolve, reject) => {
       const deletedRecords: IRecord[] = [];
       try {
