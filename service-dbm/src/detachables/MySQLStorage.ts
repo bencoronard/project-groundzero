@@ -24,40 +24,21 @@ export class MySQLStorage implements RecordRepository {
   ): Promise<IRecord[]> {
     let connection;
     try {
-      const [parsedConditions, conn] = await Promise.all([
-        parseConditions(matchCriteria),
+      const [matchConditions, conn] = await Promise.all([
+        parseConditions(matchCriteria, ' AND '),
         this.pool.getConnection(),
       ]);
-      const { conditions, values } = parsedConditions;
+      const { matchString, matchValues } = matchConditions;
       connection = conn;
-      const [rows] = await connection.query(
-        `
+      const query: string = `
         SELECT ${Record.getAttributes().join(', ')}
         FROM \`${this.database}\`.\`${this.table}\`
-        WHERE ${conditions}
+        WHERE ${matchString}
         LIMIT ${matchLimit}
         OFFSET ${matchOffset};
-      `,
-        values
-      );
-      return rows as IRecord[];
-    } catch (error) {
-      throw error;
-    } finally {
-      if (connection) {
-        connection.release();
-      }
-    }
-  }
-
-  async createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]> {
-    let connection;
-    try {
-      const [conn] = await Promise.all([this.pool.getConnection()]);
-      connection = conn;
-      return [
-        { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
-      ];
+    `;
+      const [result] = await connection.query(query, matchValues);
+      return result as IRecord[];
     } catch (error) {
       throw error;
     } finally {
@@ -69,72 +50,104 @@ export class MySQLStorage implements RecordRepository {
 
   async updateEntries(
     matchCriteria: Partial<IRecord>,
-    updateValues: Partial<IRecord>
-  ): Promise<IRecord[]> {
-    return [
-      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
-    ];
+    updateCriteria: Partial<IRecord>
+  ): Promise<number> {
+    let connection;
+    try {
+      const [matchConditions, updateConditions, conn] = await Promise.all([
+        parseConditions(matchCriteria, ' AND '),
+        parseConditions(updateCriteria, ', '),
+        this.pool.getConnection(),
+      ]);
+      const { matchString, matchValues } = matchConditions;
+      const { updateString, updateValues } = updateConditions;
+      connection = conn;
+      const query: string = `
+        UPDATE \`${this.database}\`.\`${this.table}\`
+        SET ${updateString}
+        WHERE ${matchString};
+    `;
+      const [result] = await connection.query(
+        query,
+        updateValues.concat(matchValues)
+      );
+      return (result as mysql.ResultSetHeader).affectedRows;
+    } catch (error) {
+      throw error;
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
   }
 
-  async deleteEntries(
-    matchCriteria: Partial<IRecord>,
-    matchOffset?: number | undefined
-  ): Promise<IRecord[]> {
-    return [
-      { field1: 777, field2: 'Ronoa', field3: 'Zoro', field4: 'OnePiece' },
-    ];
+  async createEntries(recordsToInsert: IRecord[]): Promise<number> {
+    let connection;
+    try {
+      connection = await this.pool.getConnection();
+      const query: string = `
+        INSERT INTO \`${this.database}\`.\`${
+        this.table
+      }\` (${Record.getAttributes().join(', ')})
+        VALUES ?;
+      `;
+      const values: any[] = recordsToInsert.map((record) => {
+        const array: any[] = [];
+        Object.keys(record).forEach((key) => {
+          array.push(record[key as keyof IRecord]);
+        });
+        return array;
+      });
+      const [result] = await connection.query(query, [values]);
+      return (result as mysql.ResultSetHeader).affectedRows;
+    } catch (error) {
+      throw error;
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
   }
 
-  // async createUser(user: User): Promise<User> {
-  //   const sql = 'INSERT INTO users (name, email) VALUES (?, ?)';
-  //   const args = [user.name, user.email];
-  //   await this.query(sql, args);
-  //   return user;
-  // }
-
-  // async getUserById(id: string): Promise<User | null> {
-  //   const sql = 'SELECT * FROM users WHERE id = ?';
-  //   const args = [id];
-  //   const rows = await this.query<RowDataPacket[]>(sql, args);
-  //   if (rows.length > 0) {
-  //     const userRow = rows[0];
-  //     return { id: userRow.id, name: userRow.name, email: userRow.email };
-  //   }
-  //   return null;
-  // }
-
-  // async updateUser(user: User): Promise<User | null> {
-  //   const sql = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
-  //   const args = [user.name, user.email, user.id];
-  //   const result = await this.query<RowDataPacket[]>(sql, args);
-  //   if (result.affectedRows > 0) {
-  //     return user;
-  //   }
-  //   return null;
-  // }
-
-  // async deleteUser(id: string): Promise<User | null> {
-  //   const sql = 'DELETE FROM users WHERE id = ?';
-  //   const args = [id];
-  //   const result = await this.query<RowDataPacket[]>(sql, args);
-  //   if (result.affectedRows > 0) {
-  //     return { id, name: '', email: '' };
-  //   }
-  //   return null;
-  // }
+  async deleteEntries(matchCriteria: Partial<IRecord>): Promise<number> {
+    let connection;
+    try {
+      const [matchConditions, conn] = await Promise.all([
+        parseConditions(matchCriteria, ' AND '),
+        this.pool.getConnection(),
+      ]);
+      const { matchString, matchValues } = matchConditions;
+      connection = conn;
+      const query: string = `
+        DELETE FROM \`${this.database}\`.\`${this.table}\`
+        WHERE ${matchString};
+    `;
+      const [result] = await connection.query(query, matchValues);
+      return (result as mysql.ResultSetHeader).affectedRows;
+    } catch (error) {
+      throw error;
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
+  }
 }
 
-async function parseConditions(input: {
-  [key: string]: any;
-}): Promise<{ [key: string]: string | any[] }> {
+async function parseConditions(
+  input: {
+    [key: string]: any;
+  },
+  separator: string
+): Promise<{ [key: string]: string | any[] }> {
   try {
     let parsedConditions: string = '';
     const parsedValues: any[] = [];
     Object.keys(input).forEach((key) => {
-      parsedConditions += key + ' = ' + '?' + ' AND ';
-      parsedValues.push(input[key as keyof IRecord]);
+      parsedConditions += key + ' = ' + '?' + separator;
+      parsedValues.push(input[key]);
     });
-    parsedConditions = parsedConditions.slice(0, -5);
+    parsedConditions = parsedConditions.slice(0, -separator.length);
     return { conditions: parsedConditions, values: parsedValues };
   } catch {
     throw new Error('Error parsing query conditions');

@@ -1,6 +1,6 @@
 import { IRecord } from './Record';
 export interface RecordRepository {
-  createEntries(recordsToInsert: IRecord[]): Promise<IRecord[]>;
+  createEntries(recordsToInsert: IRecord[]): Promise<number>;
 
   readEntries(
     matchCriteria: Partial<IRecord>,
@@ -10,11 +10,8 @@ export interface RecordRepository {
 
   updateEntries(
     matchCriteria: Partial<IRecord>,
-    updateValues: Partial<IRecord>
-  ): Promise<IRecord[]>;
+    updateCriteria: Partial<IRecord>
+  ): Promise<number>;
 
-  deleteEntries(
-    matchCriteria: Partial<IRecord>,
-    matchOffset?: number
-  ): Promise<IRecord[]>;
+  deleteEntries(matchCriteria: Partial<IRecord>): Promise<number>;
 }

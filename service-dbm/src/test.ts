@@ -17,44 +17,6 @@ const baseUrl = 'http://localhost:3000/records';
 // const db = new MySQLStorage(config, table);
 // const interactor = new Interactor(db);
 
-const queryParams = {
-  // field1: 'abc',
-  // field2: 'def',
-  // field3: 'duelist',
-  // field4: 'KR',
-  limit: 100,
-  offset: 0,
-};
-
-const data = {
-  records: [
-    {
-      field1: 500,
-      field2: 'John',
-      field3: 'Doe',
-      field4: 'TH',
-    },
-    {
-      field1: 501,
-      field2: 'James',
-      field3: 'Dean',
-      field4: 'UK',
-    },
-    {
-      field1: 502,
-      field2: 'Jack',
-      field3: 'Dawn',
-      field4: 'GG',
-    },
-    {
-      field1: 504,
-      field2: 'Levi',
-      field3: 'Strauss',
-      field4: 'LV',
-    },
-  ],
-};
-
 // const response = execute.fetchRecords(queryParams);
 
 // let response = db.readEntries(
@@ -99,6 +61,71 @@ const data = {
 //     console.error('Error:', error);
 //   });
 
+// let queryParams: { [key: string]: any } = {
+//   // field1: 'abc',
+//   // field2: 'def',
+//   field3: 'duelist',
+//   field4: 'KR',
+//   limit: 100,
+//   offset: 0,
+// };
+
+const data = {
+  records: [
+    {
+      field1: 500,
+      field2: 'John',
+      field3: 'Doe',
+      field4: 'TH',
+    },
+    {
+      field1: 501,
+      field2: 'James',
+      field3: 'Dean',
+      field4: 'TH',
+    },
+    {
+      field1: 502,
+      field2: 'Jack',
+      field3: 'Dawn',
+      field4: 'TH',
+    },
+    {
+      field1: 504,
+      field2: 'Levi',
+      field3: 'Strauss',
+      field4: 'TH',
+    },
+  ],
+};
+
+// axios
+//   .get(baseUrl, { params: queryParams })
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error.response.data);
+//   });
+
+// axios
+//   .post(baseUrl, data)
+//   .then((response) => {
+//     console.log('Response:', response.data);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error.response.data);
+//   });
+
+const queryParams = {
+  // field1: 'abc',
+  // field2: 'def',
+  // field3: 'duelist',
+  field4: 'TH',
+  limit: 100,
+  offset: 0,
+};
+
 axios
   .get(baseUrl, { params: queryParams })
   .then((response) => {
@@ -107,3 +134,23 @@ axios
   .catch((error) => {
     console.error('Error:', error.response.data);
   });
+
+axios
+  .delete(baseUrl, { params: queryParams })
+  .then((response) => {
+    console.log('Response:', response.data);
+  })
+  .catch((error) => {
+    console.error('Error:', error.response.data);
+  });
+
+axios
+  .get(baseUrl, { params: queryParams })
+  .then((response) => {
+    console.log('Response:', response.data);
+  })
+  .catch((error) => {
+    console.error('Error:', error.response.data);
+  });
+
+console.log(['a', 'b'].concat(['1', '2']));

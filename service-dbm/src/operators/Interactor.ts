@@ -22,12 +22,12 @@ export class Interactor implements RecordInteractor {
         const recordBundle: IRecord[] = await Record.processRecords(
           recordsToCreate
         );
-        const insertedRecords: IRecord[] =
+        const insertedRecords: number =
           await this.recordRepository.createEntries(recordBundle);
         const response: ResponseHTTP = {
           statusCode: 201,
           headers: { 'Content-Type': 'text/plain' },
-          body: `Number of records created: ${insertedRecords.length} of ${numRecords}`,
+          body: `Number of records created: ${insertedRecords} of ${numRecords}`,
         };
         return response;
       } catch (error) {
@@ -48,7 +48,7 @@ export class Interactor implements RecordInteractor {
         const updateValues: Partial<IRecord> = await Record.parseRecordPartial(
           parsedBody.update
         );
-        const updatedRecords: IRecord[] =
+        const updatedRecords: number =
           await this.recordRepository.updateEntries(
             updateCriteria,
             updateValues
@@ -56,7 +56,7 @@ export class Interactor implements RecordInteractor {
         const response: ResponseHTTP = {
           statusCode: 200,
           headers: { 'Content-Type': 'text/plain' },
-          body: `Number of records updated: ${updatedRecords.length}`,
+          body: `Number of records updated: ${updatedRecords}`,
         };
         return response;
       } catch (error) {
@@ -101,14 +101,13 @@ export class Interactor implements RecordInteractor {
       const deleteCriteria: Partial<IRecord> = await Record.parseRecordPartial(
         parsedQuery
       );
-      const deleteOffset: number =
-        parsedQuery.offset && parsedQuery.offset >= 0 ? parsedQuery.offset : 0;
-      const deletedRecords: IRecord[] =
-        await this.recordRepository.deleteEntries(deleteCriteria, deleteOffset);
+      const deletedRecords: number = await this.recordRepository.deleteEntries(
+        deleteCriteria
+      );
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'text/plain' },
-        body: `Number of records deleted: ${deletedRecords.length}`,
+        body: `Number of records deleted: ${deletedRecords}`,
       };
       return response;
     } catch (error) {
