@@ -6,6 +6,7 @@ import path from 'path';
 export class StorageMemory implements RecordRepository {
   private storedRecords: IRecord[];
   public numEntries: number;
+
   constructor() {
     this.storedRecords = JSON.parse(
       readFileSync(path.join(__dirname, '..', 'agents.json'), 'utf-8')
