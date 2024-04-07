@@ -6,6 +6,7 @@ export class StorageMySQL implements RecordRepository {
   private pool: mysql.Pool;
   private database: string;
   private table: string;
+
   constructor(config: { [key: string]: string }, table: string) {
     this.pool = mysql.createPool({
       host: config.host,

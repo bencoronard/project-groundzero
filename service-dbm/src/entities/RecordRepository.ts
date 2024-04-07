@@ -4,8 +4,8 @@ export interface RecordRepository {
 
   readEntries(
     matchCriteria: Partial<IRecord>,
-    matchLimit?: number,
-    matchOffset?: number
+    matchLimit: number,
+    matchOffset: number
   ): Promise<IRecord[]>;
 
   updateEntries(
