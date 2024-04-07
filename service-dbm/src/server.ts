@@ -6,8 +6,7 @@ import { Interactor } from './operators/Interactor';
 import { Controller } from './operators/Controller';
 
 const PORT: number = 3000;
-const app = express();
-
+const typeDB: string = 'MySQL';
 const config = {
   host: 'localhost',
   user: 'root',
@@ -15,43 +14,43 @@ const config = {
   database: 'valorant',
 };
 const table = 'agents';
-const db = new StorageMySQL(config, table);
 
-const interactor = new Interactor(db);
-const controller = new Controller(interactor);
-
+const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.all('/records*', async (req, res) => {
-  try {
-    const reqHTTP = new ExpressHTTP(req);
-    const resHTTP = await controller.route(reqHTTP);
-    res.status(resHTTP.statusCode);
-    res.set(resHTTP.headers);
-    res.send(resHTTP.body);
-  } catch (error) {
-    res.status(500).send((error as Error).message);
-  }
-});
+process.on('SIGINT', shutdownApp);
+startApp();
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+async function startApp(): Promise<void> {
+  const db = new StorageMySQL(config, table);
+  const interactor = new Interactor(db);
+  const controller = new Controller(interactor);
 
-const type: string = 'Mongo';
+  app.all('/records*', async (req, res) => {
+    try {
+      const reqHTTP = new ExpressHTTP(req);
+      const resHTTP = await controller.route(reqHTTP);
+      res.status(resHTTP.statusCode);
+      res.set(resHTTP.headers);
+      res.send(resHTTP.body);
+    } catch (error) {
+      res.status(500).send((error as Error).message);
+    }
+  });
 
-process.on('SIGINT', async () => {
-  await shutdownApp(type);
-});
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
 
-async function shutdownApp(typeDB: string): Promise<void> {
+async function shutdownApp(): Promise<void> {
   try {
     switch (typeDB) {
-      case 'NoSQL':
+      case 'MongoDB':
         console.log('Mongo!');
         break;
-      case 'SQL':
+      case 'MySQL':
         console.log('Sequel!');
         break;
       default:
