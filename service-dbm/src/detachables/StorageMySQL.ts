@@ -2,7 +2,7 @@ import { RecordRepository } from '../entities/RecordRepository';
 import { Record, IRecord } from '../entities/Record';
 import * as mysql from 'mysql2/promise';
 
-export class MySQLStorage implements RecordRepository {
+export class StorageMySQL implements RecordRepository {
   private pool: mysql.Pool;
   private database: string;
   private table: string;

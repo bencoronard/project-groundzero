@@ -1,6 +1,6 @@
 import express from 'express';
 import { ExpressHTTP } from './detachables/ExpressHTTP';
-import { MySQLStorage } from './detachables/MySQLStorage';
+import { StorageMySQL } from './detachables/StorageMySQL';
 import { Interactor } from './operators/Interactor';
 import { Controller } from './operators/Controller';
 
@@ -14,7 +14,7 @@ const config = {
   database: 'valorant',
 };
 const table = 'agents';
-const db = new MySQLStorage(config, table);
+const db = new StorageMySQL(config, table);
 
 const interactor = new Interactor(db);
 const controller = new Controller(interactor);

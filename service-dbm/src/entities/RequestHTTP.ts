@@ -4,5 +4,5 @@ export interface RequestHTTP {
   method: string;
   pathParams?: { [key: string]: string };
   queryParams?: { [key: string]: any };
-  body?: { [key: string]: IRecord[] };
+  body?: { [key: string]: Partial<IRecord[]> };
 }
