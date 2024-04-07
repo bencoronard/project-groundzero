@@ -1,6 +1,7 @@
 import express from 'express';
 import { ExpressHTTP } from './detachables/ExpressHTTP';
 import { StorageMySQL } from './detachables/StorageMySQL';
+import { StorageMongoDB } from './detachables/StorageMongoDB';
 import { Interactor } from './operators/Interactor';
 import { Controller } from './operators/Controller';
 
@@ -37,3 +38,30 @@ app.all('/records*', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+const type: string = 'Mongo';
+
+process.on('SIGINT', async () => {
+  await shutdownApp(type);
+});
+
+async function shutdownApp(typeDB: string): Promise<void> {
+  try {
+    switch (typeDB) {
+      case 'NoSQL':
+        console.log('Mongo!');
+        break;
+      case 'SQL':
+        console.log('Sequel!');
+        break;
+      default:
+        console.log('Forget!');
+        break;
+    }
+    console.log('Database connections closed');
+    process.exit(0);
+  } catch {
+    console.log('Error closing database connections');
+    process.exit(1);
+  }
+}
