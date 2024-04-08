@@ -7,23 +7,11 @@ import { Interactor } from './operators/Interactor';
 import { Controller } from './operators/Controller';
 import { RecordRepository } from './entities/RecordRepository';
 
-dotenv.config();
-
-const PORT: number = parseInt(process.env.PORT || '3000', 10);
-const typeDB: string = process.env.DB_TYPE || 'MongoDB';
-const config = {
-  host: 'localhost',
-  user: 'root',
-  password: '1234',
-  database: 'valorant',
+const main = async function (): Promise<void> {
+  initialize();
+  await startApp();
 };
-const table = 'agents';
-
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-startApp();
+main();
 
 async function startApp(): Promise<void> {
   const db = new StorageMySQL(config, table);
@@ -60,4 +48,21 @@ async function shutdownApp(db: RecordRepository): Promise<void> {
     console.log('Error closing database connections');
     process.exit(1);
   }
+}
+
+function initialize(): void {
+  dotenv.config();
+  const PORT: number = parseInt(process.env.PORT || '3000', 10);
+  const typeDB: string = process.env.DB_TYPE || 'MongoDB';
+  const config = {
+    host: 'localhost',
+    user: 'root',
+    password: '1234',
+    database: 'valorant',
+  };
+  const table = 'agents';
+
+  const app = express();
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 }

@@ -129,4 +129,14 @@ export class StorageMemory implements RecordRepository {
   showRecords(): void {
     console.log(this.storedRecords);
   }
+
+  async closeConnection(): Promise<void> {
+    try {
+      if (this.storedRecords) {
+        this.storedRecords = [];
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }

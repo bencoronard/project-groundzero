@@ -63,8 +63,12 @@ export class StorageMongoDB implements RecordRepository {
   }
 
   async closeConnection(): Promise<void> {
-    if (this.client) {
-      await this.client.close();
+    try {
+      if (this.client) {
+        await this.client.close();
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }
