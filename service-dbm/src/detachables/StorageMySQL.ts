@@ -7,7 +7,13 @@ export class StorageMySQL implements RecordRepository {
   private database: string;
   private table: string;
 
-  constructor(config: { [key: string]: string }, table: string) {
+  constructor(config: {
+    host: string;
+    user: string;
+    password: string;
+    database: string;
+    table: string;
+  }) {
     this.pool = mysql.createPool({
       host: config.host,
       user: config.user,
@@ -15,7 +21,7 @@ export class StorageMySQL implements RecordRepository {
       database: config.database,
     });
     this.database = config.database;
-    this.table = table;
+    this.table = config.table;
   }
 
   async readEntries(
