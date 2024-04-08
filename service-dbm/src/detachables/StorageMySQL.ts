@@ -1,6 +1,7 @@
 import { RecordRepository } from '../entities/RecordRepository';
 import { Record, IRecord } from '../entities/Record';
 import * as mysql from 'mysql2/promise';
+import { promises } from 'dns';
 
 export class StorageMySQL implements RecordRepository {
   private pool: mysql.Pool;
@@ -129,6 +130,12 @@ export class StorageMySQL implements RecordRepository {
       if (connection) {
         connection.release();
       }
+    }
+  }
+
+  async closeConnection(): Promise<void> {
+    if (this.pool) {
+      await this.pool.end();
     }
   }
 }

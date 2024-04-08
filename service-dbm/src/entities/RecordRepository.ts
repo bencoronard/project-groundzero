@@ -14,4 +14,6 @@ export interface RecordRepository {
   ): Promise<number>;
 
   deleteEntries(matchCriteria: Partial<IRecord>): Promise<number>;
+
+  closeConnection(): Promise<void>;
 }

@@ -1,12 +1,16 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import { ExpressHTTP } from './detachables/ExpressHTTP';
 import { StorageMySQL } from './detachables/StorageMySQL';
 import { StorageMongoDB } from './detachables/StorageMongoDB';
 import { Interactor } from './operators/Interactor';
 import { Controller } from './operators/Controller';
+import { RecordRepository } from './entities/RecordRepository';
 
-const PORT: number = 3000;
-const typeDB: string = 'MySQL';
+dotenv.config();
+
+const PORT: number = parseInt(process.env.PORT || '3000', 10);
+const typeDB: string = process.env.DB_TYPE || 'MongoDB';
 const config = {
   host: 'localhost',
   user: 'root',
@@ -19,7 +23,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-process.on('SIGINT', shutdownApp);
 startApp();
 
 async function startApp(): Promise<void> {
@@ -39,24 +42,18 @@ async function startApp(): Promise<void> {
     }
   });
 
+  process.on('SIGINT', async () => {
+    await shutdownApp(db);
+  });
+
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
 }
 
-async function shutdownApp(): Promise<void> {
+async function shutdownApp(db: RecordRepository): Promise<void> {
   try {
-    switch (typeDB) {
-      case 'MongoDB':
-        console.log('Mongo!');
-        break;
-      case 'MySQL':
-        console.log('Sequel!');
-        break;
-      default:
-        console.log('Forget!');
-        break;
-    }
+    await db.closeConnection();
     console.log('Database connections closed');
     process.exit(0);
   } catch {
