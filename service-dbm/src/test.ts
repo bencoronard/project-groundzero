@@ -1,81 +1,21 @@
 import axios from 'axios';
-const baseUrl = 'http://localhost:3000/records';
+const baseUrl = 'http://localhost:7777/records';
 
-// import { MySQLStorage } from './detachables/MySQLStorage';
-// import { RequestHTTP } from './entities/RequestHTTP';
-// import { ResponseHTTP } from './entities/ResponseHTTP';
-// import { Interactor } from './operators/Interactor';
+const queryParams: { [key: string]: any } = {
+  // field1: 'abc',
+  // field2: 'def',
+  // field3: 'duelist',
+  field4: 'TH',
+  limit: 20,
+  offset: 0,
+};
 
-// const config = {
-//   host: 'localhost',
-//   user: 'root',
-//   password: '1234',
-//   database: 'valorant',
-// };
-// const table = 'agents';
-
-// const db = new MySQLStorage(config, table);
-// const interactor = new Interactor(db);
-
-// const response = execute.fetchRecords(queryParams);
-
-// let response = db.readEntries(
-//   { field3: 'controller' },
-//   queryParams.limit,
-//   queryParams.offset
-// );
-// response
-//   .then((result) => {
-//     console.log(result);
-//     console.log('End of query');
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//     console.log('End of error');
-//   });
-
-// response = db.createEntries([
-//   {
-//     field1: 1,
-//     field2: 'George',
-//     field3: 'initiator',
-//     field4: 'Hello',
-//   },
-// ]);
-// response
-//   .then((result) => {
-//     console.log(result);
-//     console.log('End of query');
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//     console.log('End of error');
-//   });
-
-// axios
-//   .post(baseUrl, data)
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error);
-//   });
-
-// let queryParams: { [key: string]: any } = {
-//   // field1: 'abc',
-//   // field2: 'def',
-//   field3: 'duelist',
-//   field4: 'KR',
-//   limit: 100,
-//   offset: 0,
-// };
-
-const dData = {
+const updateData = {
   match: { field4: 'TH' },
   update: { field3: 'Sawasdee' },
 };
 
-const data = {
+const postData = {
   records: [
     {
       field1: 500,
@@ -104,64 +44,55 @@ const data = {
   ],
 };
 
-// axios
-//   .get(baseUrl, { params: queryParams })
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error.response.data);
-//   });
+// test();
 
-axios
-  .post(baseUrl, data)
-  .then((response) => {
-    console.log('Response:', response.data);
-  })
-  .catch((error) => {
-    console.error('Error:', error.response.data);
-  });
-
-const queryParams = {
-  // field1: 'abc',
-  // field2: 'def',
-  // field3: 'duelist',
-  field4: 'TH',
-  limit: 100,
-  offset: 0,
-};
-
-// axios
-//   .get(baseUrl, { params: queryParams })
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error.response.data);
-//   });
-
-// axios
-//   .delete(baseUrl, { params: queryParams })
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error.response.data);
-//   });
-
-// axios
-//   .get(baseUrl, { params: queryParams })
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error.response.data);
-//   });
-// axios
-//   .put(baseUrl, dData)
-//   .then((response) => {
-//     console.log('Response:', response.data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error.response.data);
-//   });
+async function test() {
+  await axios
+    .post(baseUrl, postData)
+    .then((response) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error.response.data);
+    });
+  await axios
+    .get(baseUrl, { params: queryParams })
+    .then((response) => {
+      console.log(`Response:\n`, response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error.response.data);
+    });
+  await axios
+    .put(baseUrl, updateData)
+    .then((response) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error.response.data);
+    });
+  await axios
+    .get(baseUrl, { params: queryParams })
+    .then((response) => {
+      console.log(`Response:\n`, response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error.response.data);
+    });
+  await axios
+    .delete(baseUrl, { params: queryParams })
+    .then((response) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error.response.data);
+    });
+  await axios
+    .get(baseUrl, { params: queryParams })
+    .then((response) => {
+      console.log(`Response:\n`, response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error.response.data);
+    });
+}

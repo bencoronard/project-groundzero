@@ -7,11 +7,13 @@ export class StorageMongoDB implements RecordRepository {
   private database: string;
   private collection: mongo.Collection<IRecord>;
 
-  constructor(config: { uri: string; database: string }, collection: string) {
+  constructor(config: { uri: string; database: string; collection: string }) {
     this.client = new mongo.MongoClient(config.uri);
     this.client.connect();
     this.database = config.database;
-    this.collection = this.client.db(this.database).collection(collection);
+    this.collection = this.client
+      .db(this.database)
+      .collection(config.collection);
   }
 
   async createEntries(recordsToInsert: IRecord[]): Promise<number> {
@@ -57,6 +59,16 @@ export class StorageMongoDB implements RecordRepository {
     try {
       const result = await this.collection.deleteMany(matchCriteria);
       return result.deletedCount ?? 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async closeConnection(): Promise<void> {
+    try {
+      if (this.client) {
+        await this.client.close();
+      }
     } catch (error) {
       throw error;
     }

@@ -75,9 +75,13 @@ export class Interactor implements RecordInteractor {
         parsedQuery
       );
       const fetchLimit: number =
-        parsedQuery.limit && parsedQuery.limit >= 0 ? parsedQuery.limit : 100;
+        parsedQuery.limit && parsedQuery.limit >= 0
+          ? parseInt(parsedQuery.limit)
+          : 100;
       const fetchOffset: number =
-        parsedQuery.offset && parsedQuery.offset >= 0 ? parsedQuery.offset : 0;
+        parsedQuery.offset && parsedQuery.limit >= 0
+          ? parseInt(parsedQuery.offset)
+          : 0;
       const fetchedRecords: IRecord[] = await this.recordRepository.readEntries(
         fetchCriteria,
         fetchLimit,
