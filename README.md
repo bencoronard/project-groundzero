@@ -30,12 +30,72 @@ It is also worth noting that each microservice is implemented in a way that ther
 
 The repository is structured as follows:
 
-- /service-\*\*\*: Directory pertaining to each microservice, such as
-  - /service-dbm: database management service,
-  - /service-auth: authentication service.
-- /service-\*\*\*/src: Contains source code of the corresponding microservice.
-- /service-\*\*\*/build: Contains transpiled code for production.
+- /service-\*\*\* : directory pertaining to each microservice,
+  - /src : directory containing source code of the corresponding microservice,
+  - /build : directory containing transpiled code in production,
+  - /docs : directory containing documentations of the microservice.
 
 ## Usage
 
 Each microservice exposes RESTful endpoints for specific functionalities. Refer to the API documentation (/docs/api.md) for details on available endpoints and their usage.
+
+## Future
+
+More microservices will be developed and added to the project.
+
+Here are the projected components of the repository:
+
+- /services-dbm : database management service
+- /services-auth : authentication and authorization service
+- /services-web : web server service
+
+# GPT
+
+# Welcome to Project GroundZero
+
+This repository contains a collection of application microservices aimed at building scalable and modular cloud-native applications. Each microservice implements a RESTful API following software best practices.
+
+## Table of Contents
+
+- [Concept](#concept)
+- [Technologies Used](#technologies-used)
+- [Project Structure](#project-structure)
+- [Usage](#usage)
+- [Future](#future)
+
+## Concept
+
+- Provides abstractions of application microservices for general functionalities.
+- Designed with clear separation between business domain logic and software infrastructure.
+- Facilitates maintainability, scalability, and testability, highlighting frameworks independence.
+
+## Technologies Used (so far)
+
+- Node.js: Backend environment.
+- Express.js: Web framework for Node.js.
+- TypeScript: Adds static typing and other features to JavaScript.
+- MySQL: Relational database for structured data.
+- MongoDB: NoSQL database for flexible data storage.
+
+## Project Structure
+
+The repository is structured as follows:
+
+- `/service-***`: Directory for each microservice.
+  - `/src`: Source code of the microservice.
+  - `/build`: Transpiled code for production.
+  - `/docs`: Documentation for the microservice.
+
+## Usage
+
+Each microservice exposes RESTful endpoints. Refer to the [API documentation](/docs/api.md) for details.
+
+## Future
+
+More microservices will be developed and added to the project. Here are the projected components:
+
+- `/services-dbm`: Database management service.
+- `/services-auth`: Authentication and authorization service.
+- `/services-web`: Web server service.
+
+Stay tuned for updates and new functionalities!
