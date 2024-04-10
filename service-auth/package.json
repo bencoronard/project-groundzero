@@ -1,7 +1,7 @@
 {
-  "name": "service-dbm",
+  "name": "service-auth",
   "version": "1.0.0",
-  "description": "Database Managment Service",
+  "description": "Authentication and Authorization Service",
   "main": "./build/server.js",
   "scripts": {
     "build": "npx tsc",
@@ -9,25 +9,21 @@
     "start": "node ./build/server.js"
   },
   "keywords": [
-    "database",
-    "sql",
-    "nosql",
-    "dbms"
+    "authentication",
+    "authorization",
+    "token"
   ],
   "author": "Ben",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.21",
-    "@types/mongodb": "^4.0.7",
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.7",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "mongodb": "^6.5.0",
-    "mysql2": "^3.9.3"
+    "express": "^4.19.2"
   }
 }
