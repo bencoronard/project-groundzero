@@ -13,7 +13,7 @@ To deploy and start the service, follow these steps:
 3. Copy the '.env' file to the 'build' directory and update parameters specific to your environment.
 4. Run the 'server.js' file in the 'build' directory as the entry point of the application.
 
-To switch to a different database management system, implement the database connection script in the 'detachables' directory and add corresponding configurations to the '.env' file.
+To switch to a different database management system, implement the database connection script in the 'detachables' directory and add corresponding configurations to the '.env' file. Make sure to instantiate the corresponding object of the new database inside the 'setup()' method in the 'server.ts' file.
 
 ## API Endpoints
 
