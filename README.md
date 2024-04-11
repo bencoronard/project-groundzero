@@ -44,7 +44,7 @@ The repository is structured as follows:
 
 Each microservice exposes RESTful endpoints. Refer to the individual API documentation (/docs/api.md) for details on available endpoints and their usage.
 
-Because of the modularity and separation of concerns of the microservices,
+Because of the modular design and clear separation of concerns, the modules can be deployed together to create complex and scalable application server architectures.
 
 ## Future
 
