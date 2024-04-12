@@ -23,3 +23,7 @@ The API endpoints handle CRUD operations in a RESTful manner:
 - **DELETE /records** + query parameters: Delete records matching the specified query parameters.
 - **POST /records** + request body: Create records based on the data in the request body.
 - **PUT /records** + request body: Update records matching the specified criteria with data from the request body.
+
+## Future
+
+- Create access control after 'service-auth' microservice has been implemented
