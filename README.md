@@ -52,7 +52,8 @@ More microservices will be developed and added to the project. Here are the proj
 
 - `/services-dbm`: Database management service.
 - `/services-auth`: Authentication and authorization service.
+- `/services-wskt`: WebSocket service.
 - `/services-web`: Web server service.
-- and more.
+- etc.
 
 Stay tuned for updates and new functionalities!
