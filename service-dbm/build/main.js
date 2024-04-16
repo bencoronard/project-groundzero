@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Server_1 = require("./Server");
-const server = new Server_1.Server();
+const server_1 = require("./server");
+const server = new server_1.Server();
 process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield server.stop();
