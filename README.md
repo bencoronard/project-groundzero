@@ -8,6 +8,7 @@ This repository contains a collection of application microservices aimed at buil
 - [Technologies Used](#technologies-used)
 - [Project Structure](#project-structure)
 - [Usage](#usage)
+- [Progress](#progress)
 - [Future](#future)
 
 ## Concept
@@ -45,6 +46,13 @@ The repository is structured as follows:
 Each microservice exposes RESTful endpoints. Refer to the individual API documentation (/docs/api.md) for details on available endpoints and their usage.
 
 Because of the modular design and clear separation of concerns, the modules can be deployed together to create complex and scalable application server architectures.
+
+## Progress
+
+- `/services-dbm`: Implemented
+- `/services-wskt`: Implemented
+- `/services-auth`: Implementing
+- `/services-web`: Planned
 
 ## Future
 
