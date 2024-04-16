@@ -11,7 +11,7 @@ To deploy and start the service, follow these steps:
 1. Install all dependencies in the root directory 'service-dbm'.
 2. If not already done, compile TypeScript scripts in the 'src' directory. This generates a 'build' directory mirroring 'src'.
 3. Copy the '.env' file to the 'build' directory and update parameters specific to your environment.
-4. Run the 'server.js' file in the 'build' directory as the entry point of the application.
+4. Run the 'main.js' file in the 'build' directory as the entry point of the application.
 
 To switch to a different database management system, implement the database connection script in the 'detachables' directory and add corresponding configurations to the '.env' file. Make sure to instantiate the corresponding object of the new database inside the 'setup()' method in the 'server.ts' file.
 

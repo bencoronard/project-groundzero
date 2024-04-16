@@ -12,85 +12,76 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+exports.Server = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
+const express_1 = __importDefault(require("express"));
 const ExpressHTTP_1 = require("./detachables/ExpressHTTP");
 const Interactor_1 = require("./operators/Interactor");
 const Controller_1 = require("./operators/Controller");
 const StorageMySQL_1 = require("./detachables/StorageMySQL");
 const StorageMongoDB_1 = require("./detachables/StorageMongoDB");
-const app = (0, express_1.default)();
-main();
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const { port: PORT, db: database } = yield initialize();
-            process.on('SIGINT', () => __awaiter(this, void 0, void 0, function* () {
-                yield closeDB(database);
-            }));
-            app.listen(PORT, () => {
-                console.log(`Server listening on port: ${PORT}`);
-            });
-        }
-        catch (error) {
-            console.error(`Error starting the server...\n`, error);
-            process.exit(1);
-        }
-    });
-}
-function setup() {
-    return __awaiter(this, void 0, void 0, function* () {
+class Server {
+    constructor() {
         try {
             dotenv_1.default.config();
-            const result = { port: 0, db: {} };
-            if (process.env.PORT && process.env.DB_TYPE) {
-                result.port = parseInt(process.env.PORT, 10);
-                const dbType = process.env.DB_TYPE;
-                if (process.env.CONFIG_MYSQL && dbType === 'MySQL') {
-                    const config = JSON.parse(process.env.CONFIG_MYSQL);
-                    if (config.host &&
-                        config.user &&
-                        config.password &&
-                        config.database &&
-                        config.table) {
-                        result.db = new StorageMySQL_1.StorageMySQL(config);
-                    }
-                    else {
-                        throw new Error('Incomplete database config');
-                    }
-                }
-                else if (process.env.CONFIG_MONGO && dbType === 'MongoDB') {
-                    const config = JSON.parse(process.env.CONFIG_MONGO);
-                    if (config.uri && config.database && config.collection) {
-                        result.db = new StorageMongoDB_1.StorageMongoDB(config);
-                    }
-                    else {
-                        throw new Error('Incomplete database config');
-                    }
+            this.params = this.config();
+            this.db = this.setupDB();
+            this.app = (0, express_1.default)();
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    config() {
+        if (process.env.PORT && process.env.DB_TYPE) {
+            return {
+                port: parseInt(process.env.PORT, 10),
+                dbType: process.env.DB_TYPE,
+            };
+        }
+        else {
+            throw new Error('Missing environment variables');
+        }
+    }
+    setupDB() {
+        try {
+            if (process.env.CONFIG_MYSQL && this.params.dbType === 'MySQL') {
+                const credentials = JSON.parse(process.env.CONFIG_MYSQL);
+                if (credentials.host &&
+                    credentials.user &&
+                    credentials.password &&
+                    credentials.database &&
+                    credentials.table) {
+                    return new StorageMySQL_1.StorageMySQL(credentials);
                 }
                 else {
-                    throw new Error('Missing or invalid database config');
+                    throw new Error('Incomplete database config');
                 }
-                return result;
+            }
+            else if (process.env.CONFIG_MONGO && this.params.dbType === 'MongoDB') {
+                const credentials = JSON.parse(process.env.CONFIG_MONGO);
+                if (credentials.uri && credentials.database && credentials.collection) {
+                    return new StorageMongoDB_1.StorageMongoDB(credentials);
+                }
+                else {
+                    throw new Error('Incomplete database config');
+                }
             }
             else {
-                throw new Error('Missing environment variables');
+                throw new Error('Missing or invalid database config');
             }
         }
         catch (error) {
             throw error;
         }
-    });
-}
-function initialize() {
-    return __awaiter(this, void 0, void 0, function* () {
+    }
+    start() {
         try {
-            const server = yield setup();
-            const interactor = new Interactor_1.Interactor(server.db);
+            const interactor = new Interactor_1.Interactor(this.db);
             const controller = new Controller_1.Controller(interactor);
-            app.use(express_1.default.json());
-            app.use(express_1.default.urlencoded({ extended: false }));
-            app.all('/records*', (req, res) => __awaiter(this, void 0, void 0, function* () {
+            this.app.use(express_1.default.json());
+            this.app.use(express_1.default.urlencoded({ extended: false }));
+            this.app.all('/records*', (req, res) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     const reqHTTP = new ExpressHTTP_1.ExpressHTTP(req);
                     const resHTTP = yield controller.route(reqHTTP);
@@ -102,23 +93,24 @@ function initialize() {
                     res.status(500).send(error.message);
                 }
             }));
-            return server;
+            this.app.listen(this.params.port, () => {
+                console.log(`Server listening on port: ${this.params.port}`);
+            });
         }
         catch (error) {
             throw error;
         }
-    });
+    }
+    stop() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.db.closeConnection();
+                console.log('Database connections closed');
+            }
+            catch (_a) {
+                throw new Error('Error closing database connections');
+            }
+        });
+    }
 }
-function closeDB(db) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield db.closeConnection();
-            console.log('Database connections closed');
-            process.exit(0);
-        }
-        catch (_a) {
-            console.error('Error closing database connections');
-            process.exit(1);
-        }
-    });
-}
+exports.Server = Server;
