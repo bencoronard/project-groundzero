@@ -33,12 +33,12 @@ export class Server {
 
   start() {
     try {
-      this.app.on('connection', (ws: WebSocket) => {
+      this.app.on('connection', (client: WebSocket) => {
         let inactiveTimeout: NodeJS.Timeout;
 
         const heartbeatInterval: NodeJS.Timeout = setInterval(() => {
-          if (ws.readyState === WebSocket.OPEN) {
-            ws.ping();
+          if (client.readyState === WebSocket.OPEN) {
+            client.ping();
           }
         }, this.params.heartbeat);
 
@@ -46,26 +46,26 @@ export class Server {
           clearTimeout(inactiveTimeout);
           inactiveTimeout = setTimeout(() => {
             console.log('Inactive connection detected. Closing...');
-            ws.terminate();
+            client.terminate();
           }, this.params.timeout);
         };
 
         console.log('A new client connected');
         resetInactiveTimeout();
 
-        ws.on('message', (message: string) => {
+        client.on('message', (message: string) => {
           console.log(`Received message from client: ${message}`);
-          ws.send(`Echo: ${message}`);
+          client.send(`Echo: ${message}`);
           resetInactiveTimeout();
         });
 
-        ws.on('ping', () => {
+        client.on('ping', () => {
           console.log('Received ping from client');
-          ws.pong();
+          client.pong();
           resetInactiveTimeout();
         });
 
-        ws.on('close', () => {
+        client.on('close', () => {
           console.log('Client disconnected');
           clearInterval(heartbeatInterval);
           clearTimeout(inactiveTimeout);
