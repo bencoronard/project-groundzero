@@ -85,6 +85,7 @@ export class Server {
           res.status(500).send((error as Error).message);
         }
       });
+
       this.app.listen(this.params.port, () => {
         console.log(`Server listening on port: ${this.params.port}`);
       });
