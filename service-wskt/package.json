@@ -1,13 +1,17 @@
 {
   "name": "service-wskt",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "WebSocket service",
+  "main": "./build/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx tsc",
+    "dev": "nodemon ./src/main.ts",
+    "start": "node ./build/main.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "WebSocket"
+  ],
+  "author": "Ben",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.12.7",
