@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 import dotenv from 'dotenv';
+import path from 'path';
 
 export class Server {
   private app: WebSocket.Server;
@@ -7,7 +8,7 @@ export class Server {
 
   constructor() {
     try {
-      dotenv.config();
+      dotenv.config({ path: path.resolve(__dirname, '.env') });
       this.params = this.config();
       this.app = new WebSocket.Server({ port: this.params.port });
     } catch (error) {

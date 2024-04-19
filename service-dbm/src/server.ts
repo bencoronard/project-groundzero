@@ -6,6 +6,7 @@ import { Controller } from './operators/Controller';
 import { RecordRepository } from './entities/RecordRepository';
 import { StorageMySQL } from './detachables/StorageMySQL';
 import { StorageMongoDB } from './detachables/StorageMongoDB';
+import path from 'path';
 
 export class Server {
   private db: RecordRepository;
@@ -14,7 +15,7 @@ export class Server {
 
   constructor() {
     try {
-      dotenv.config();
+      dotenv.config({ path: path.resolve(__dirname, '.env') });
       this.params = this.config();
       this.db = this.setupDB();
       this.app = express();
