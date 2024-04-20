@@ -2,6 +2,7 @@ import { Record, IRecord } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { ResponseHTTP } from '../entities/ResponseHTTP';
+import { Payload } from '../entities/Payload';
 
 export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
@@ -18,16 +19,16 @@ export class Interactor implements RecordInteractor {
         const recordsToCreate: IRecord[] = await Record.parseRecords(
           parsedBody.records
         );
-        const numRecords: number = recordsToCreate.length;
         const recordBundle: IRecord[] = await Record.processRecords(
           recordsToCreate
         );
         const insertedRecords: number =
           await this.recordRepository.createEntries(recordBundle);
+        const payload: Payload = { payload: insertedRecords };
         const response: ResponseHTTP = {
           statusCode: 201,
-          headers: { 'Content-Type': 'text/plain' },
-          body: `Number of records created: ${insertedRecords} of ${numRecords}`,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         };
         return response;
       } catch (error) {
@@ -53,10 +54,11 @@ export class Interactor implements RecordInteractor {
             updateCriteria,
             updateValues
           );
+        const payload: Payload = { payload: updatedRecords };
         const response: ResponseHTTP = {
           statusCode: 200,
-          headers: { 'Content-Type': 'text/plain' },
-          body: `Number of records updated: ${updatedRecords}`,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         };
         return response;
       } catch (error) {
@@ -87,10 +89,11 @@ export class Interactor implements RecordInteractor {
         fetchLimit,
         fetchOffset
       );
+      const payload: Payload = { payload: fetchedRecords };
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fetchedRecords),
+        body: JSON.stringify(payload),
       };
       return response;
     } catch (error) {
@@ -108,10 +111,11 @@ export class Interactor implements RecordInteractor {
       const deletedRecords: number = await this.recordRepository.deleteEntries(
         deleteCriteria
       );
+      const payload: Payload = { payload: deletedRecords };
       const response: ResponseHTTP = {
         statusCode: 200,
-        headers: { 'Content-Type': 'text/plain' },
-        body: `Number of records deleted: ${deletedRecords}`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       };
       return response;
     } catch (error) {
