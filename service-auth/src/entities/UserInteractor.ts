@@ -1,8 +1,8 @@
 import { Identity } from './Identity';
-import { IUser } from './User';
+import { ResponseHTTP } from './ResponseHTTP';
 
 export interface UserInteractor {
-  createUser(credentials: Identity): IUser;
-  authenticateUser(credentials: Identity): IUser;
-  // authorizeUser(user: IUser): string;
+  createUser(credentials: Identity): Promise<ResponseHTTP>;
+  authenticateUser(credentials: Identity): Promise<ResponseHTTP>;
+  authorizeUser(token: string): Promise<ResponseHTTP>;
 }
