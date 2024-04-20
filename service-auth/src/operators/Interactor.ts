@@ -2,7 +2,7 @@ import { Dispatcher } from '../entities/Dispatcher';
 import { IUser, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
 import { Identity } from '../entities/Identity';
-import { ResponseHTTP } from '../entities/ResponseHTTP';
+import { ResponseHTTP } from '../shared/ResponseHTTP';
 
 export class Interactor implements UserInteractor {
   private dispatcher: Dispatcher;

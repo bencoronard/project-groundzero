@@ -1,8 +1,8 @@
 import { Record, IRecord } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import { RecordInteractor } from '../entities/RecordInteractor';
-import { ResponseHTTP } from '../entities/ResponseHTTP';
-import { Payload } from '../entities/Payload';
+import { ResponseHTTP } from '../shared/ResponseHTTP';
+import { Payload } from '../shared/Payload';
 
 export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
@@ -24,7 +24,10 @@ export class Interactor implements RecordInteractor {
         );
         const insertedRecords: number =
           await this.recordRepository.createEntries(recordBundle);
-        const payload: Payload = { payload: insertedRecords };
+        const payload: Payload = {
+          desc: 'Number of records created',
+          data: insertedRecords,
+        };
         const response: ResponseHTTP = {
           statusCode: 201,
           headers: { 'Content-Type': 'application/json' },
@@ -54,7 +57,10 @@ export class Interactor implements RecordInteractor {
             updateCriteria,
             updateValues
           );
-        const payload: Payload = { payload: updatedRecords };
+        const payload: Payload = {
+          desc: 'Number of records updated',
+          data: updatedRecords,
+        };
         const response: ResponseHTTP = {
           statusCode: 200,
           headers: { 'Content-Type': 'application/json' },
@@ -89,7 +95,10 @@ export class Interactor implements RecordInteractor {
         fetchLimit,
         fetchOffset
       );
-      const payload: Payload = { payload: fetchedRecords };
+      const payload: Payload = {
+        desc: 'Retrieved records',
+        data: fetchedRecords,
+      };
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -111,7 +120,10 @@ export class Interactor implements RecordInteractor {
       const deletedRecords: number = await this.recordRepository.deleteEntries(
         deleteCriteria
       );
-      const payload: Payload = { payload: deletedRecords };
+      const payload: Payload = {
+        desc: 'Number of records deleted',
+        data: deletedRecords,
+      };
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },

@@ -1,4 +1,4 @@
-import { ResponseHTTP } from './ResponseHTTP';
+import { ResponseHTTP } from '../shared/ResponseHTTP';
 
 export interface RecordInteractor {
   createRecords(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;

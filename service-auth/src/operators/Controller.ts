@@ -1,6 +1,6 @@
 import { UserInteractor } from '../entities/UserInteractor';
-import { RequestHTTP } from '../entities/RequestHTTP';
-import { ResponseHTTP } from '../entities/ResponseHTTP';
+import { RequestHTTP } from '../shared/RequestHTTP';
+import { ResponseHTTP } from '../shared/ResponseHTTP';
 
 export class Controller {
   private userInteractor: UserInteractor;
