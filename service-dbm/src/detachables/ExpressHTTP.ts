@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { IRecord } from '../entities/Record';
-import { RequestHTTP } from '../entities/RequestHTTP';
+import { RequestHTTP } from '../shared/RequestHTTP';
 
 export class ExpressHTTP implements RequestHTTP {
   public path: string;
