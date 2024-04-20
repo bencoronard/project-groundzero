@@ -1,8 +1,9 @@
-import { Identity } from './Identity';
 import { ResponseHTTP } from './ResponseHTTP';
 
 export interface UserInteractor {
-  createUser(credentials: Identity): Promise<ResponseHTTP>;
-  authenticateUser(credentials: Identity): Promise<ResponseHTTP>;
-  authorizeUser(token: string): Promise<ResponseHTTP>;
+  createUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
+
+  authenticateUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
+
+  authorizeUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
 }
