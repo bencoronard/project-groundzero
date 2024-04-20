@@ -51,3 +51,5 @@ export class Controller {
     }
   }
 }
+// create default case to handle invalid requests
+// catch error and formulate error response
