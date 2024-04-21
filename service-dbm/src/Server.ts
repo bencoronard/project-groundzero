@@ -83,7 +83,11 @@ export class Server {
           res.set(resHTTP.headers);
           res.send(resHTTP.body);
         } catch (error) {
-          res.status(500).send((error as Error).message);
+          res.status(500).json({
+            isError: true,
+            desc: 'Error message',
+            data: (error as Error).message,
+          });
         }
       });
 

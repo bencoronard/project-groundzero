@@ -18,7 +18,7 @@ export class Record {
         ) {
           parsedRecords.push(item);
         } else {
-          throw new Error('Could not parse inputs');
+          throw new Error('Invalid or incomplete input records');
         }
       }
       return parsedRecords;
@@ -46,7 +46,7 @@ export class Record {
         parsedRecordPartial.field4 = input.field4;
       }
       if (Object.keys(parsedRecordPartial).length === 0) {
-        throw new Error('Could not parse inputs');
+        throw new Error('Invalid or incomplete input record');
       } else {
         return parsedRecordPartial;
       }
@@ -68,7 +68,7 @@ export class Record {
       });
       return processedRecords;
     } catch {
-      throw new Error('Could not process records');
+      throw new Error('Error processing input records');
     }
   }
 

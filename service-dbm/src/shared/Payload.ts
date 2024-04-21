@@ -1,4 +1,5 @@
 export interface Payload {
-  desc?: string;
+  isError: boolean;
   data: any;
+  desc?: string;
 }

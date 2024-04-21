@@ -25,6 +25,7 @@ export class Interactor implements RecordInteractor {
         const insertedRecords: number =
           await this.recordRepository.createEntries(recordBundle);
         const payload: Payload = {
+          isError: false,
           desc: 'Number of records created',
           data: insertedRecords,
         };
@@ -58,6 +59,7 @@ export class Interactor implements RecordInteractor {
             updateValues
           );
         const payload: Payload = {
+          isError: false,
           desc: 'Number of records updated',
           data: updatedRecords,
         };
@@ -96,6 +98,7 @@ export class Interactor implements RecordInteractor {
         fetchOffset
       );
       const payload: Payload = {
+        isError: false,
         desc: 'Retrieved records',
         data: fetchedRecords,
       };
@@ -121,6 +124,7 @@ export class Interactor implements RecordInteractor {
         deleteCriteria
       );
       const payload: Payload = {
+        isError: false,
         desc: 'Number of records deleted',
         data: deletedRecords,
       };
