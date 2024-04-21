@@ -14,76 +14,106 @@ export class Interactor implements UserInteractor {
   }
 
   async createUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP> {
-    if (parsedBody.credentials) {
-      try {
-        const parsedCredentials: Identity = await User.parseCredentials(
-          parsedBody.credentials
-        );
-        const check: Payload = await this.dispatcher.dispatch(
-          { url: this.baseURL, method: 'GET' },
-          { identifier: parsedCredentials.identifier, limit: 1 }
-        );
-        if (!check.data.length) {
-          const newUser = {
-            ...parsedCredentials,
-            accessLevel: 'user',
-          };
-          const operationResult: Payload = await this.dispatcher.dispatch(
-            { url: this.baseURL, method: 'POST' },
-            [newUser]
-          );
-          const response: ResponseHTTP = {
-            statusCode: operationResult.data ? 201 : 400,
-            headers: { 'Content-Type': 'text/plain' },
-            body: operationResult.data
-              ? 'New user created'
-              : 'Unable to create new user',
-          };
-          return response;
-        } else {
-          throw new Error('User already exists');
-        }
-      } catch (error) {
-        throw error;
+    try {
+      if (!parsedBody.credentials) {
+        throw new Error('Missing inputs');
       }
-    } else {
-      throw new Error('Missing inputs');
+      const parsedCredentials: Identity = await User.parseCredentials(
+        parsedBody.credentials
+      );
+      const checkExisting: Payload = await this.dispatcher.dispatch(
+        { url: this.baseURL, method: 'GET' },
+        { identifier: parsedCredentials.identifier, limit: 1 }
+      );
+      if (checkExisting.isError || checkExisting.data.length) {
+        throw checkExisting.isError
+          ? new Error('Error checking user record')
+          : new Error('User already exists');
+      }
+      // implement encrypt passCode here before storing
+      const newUser = {
+        ...parsedCredentials,
+        accessLevel: 'user',
+      };
+      const operationResult: Payload = await this.dispatcher.dispatch(
+        { url: this.baseURL, method: 'POST' },
+        [newUser]
+      );
+      if (operationResult.isError) {
+        throw new Error('Unable to create new user');
+      }
+      const response: ResponseHTTP = {
+        statusCode: 201,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isError: false,
+          data: 'New user created',
+        }),
+      };
+      return response;
+    } catch (error) {
+      throw error;
     }
   }
 
   async authenticateUser(parsedBody: {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
-    if (parsedBody.credentials) {
-      try {
-        const parsedCredentials: Identity = await User.parseCredentials(
-          parsedBody.credentials
-        );
-        const packet: {
-          match: { credentials: Identity };
-          update: Partial<IUser>;
-        } = {
-          match: { credentials: parsedCredentials },
-          update: { accessLevel: 'abc' },
-        };
-        const route = { url: this.baseURL, method: 'PUT' };
-        const operationResult: Payload = await this.dispatcher.dispatch(
-          route,
-          packet
-        );
-        const response: ResponseHTTP = {
-          statusCode: operationResult.data ? 200 : 400,
-          headers: { 'Content-Type': 'text/plain' },
-          body: operationResult.data
-            ? 'Authenticated'
-            : 'Unable to authenticate',
-        };
-        return response;
-      } catch (error) {
-        throw error;
+    try {
+      if (!parsedBody.credentials) {
+        throw new Error('Missing inputs');
       }
-    } else {
-      throw new Error('Missing inputs');
+      const parsedCredentials: Identity = await User.parseCredentials(
+        parsedBody.credentials
+      );
+      // implement encrypt passCode here before querying
+      const packet: {
+        match: Identity;
+        update: { session: string };
+      } = {
+        match: parsedCredentials,
+        update: { session: 'token' },
+      };
+      const route = { url: this.baseURL, method: 'PUT' };
+      const operationResult: Payload = await this.dispatcher.dispatch(
+        route,
+        packet
+      );
+      if (operationResult.isError) {
+        throw new Error('Error authenticating user');
+      }
+      const response: ResponseHTTP = {
+        statusCode: 202,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isError: false,
+          data: 'IdToken',
+        }),
+      };
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async authorizeUser(parsedBody: {
+    [key: string]: any;
+  }): Promise<ResponseHTTP> {
+    try {
+      if (!parsedBody.credentials) {
+        throw new Error('Missing inputs');
+      }
+      const response: ResponseHTTP = {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isError: false,
+          data: 'AccessToken',
+        }),
+      };
+      return response;
+    } catch (error) {
+      throw error;
     }
   }
 }

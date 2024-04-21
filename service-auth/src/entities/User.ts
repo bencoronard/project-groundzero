@@ -18,7 +18,7 @@ export class User {
         parsedCredentials.identifier = input.identifier.toString();
         parsedCredentials.passCode = input.passCode.toString();
       } else {
-        throw new Error('Could not parse inputs');
+        throw new Error('Incomplete input credentials');
       }
       return parsedCredentials;
     } catch (error) {

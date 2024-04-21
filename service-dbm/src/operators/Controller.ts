@@ -13,28 +13,28 @@ export class Controller {
     try {
       switch (request.method.toUpperCase()) {
         case 'GET':
-          if (request.queryParams) {
-            return await this.recordInteractor.fetchRecords(
-              request.queryParams
-            );
+          if (!request.queryParams) {
+            throw new Error('Missing query parameters');
           }
+          return await this.recordInteractor.fetchRecords(request.queryParams);
 
         case 'POST':
-          if (request.body) {
-            return await this.recordInteractor.createRecords(request.body);
+          if (!request.body) {
+            throw new Error('Missing request body');
           }
+          return await this.recordInteractor.createRecords(request.body);
 
         case 'PUT':
-          if (request.body) {
-            return await this.recordInteractor.updateRecords(request.body);
+          if (!request.body) {
+            throw new Error('Missing request body');
           }
+          return await this.recordInteractor.updateRecords(request.body);
 
         case 'DELETE':
-          if (request.queryParams) {
-            return await this.recordInteractor.deleteRecords(
-              request.queryParams
-            );
+          if (!request.queryParams) {
+            throw new Error('Missing query parameters');
           }
+          return await this.recordInteractor.deleteRecords(request.queryParams);
 
         default:
           return {
