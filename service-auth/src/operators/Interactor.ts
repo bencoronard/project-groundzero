@@ -100,6 +100,7 @@ export class Interactor implements UserInteractor {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
     try {
+      // if (!parsedHeader.bearerToken) {throw new Error('Missing inputs')}
       if (!parsedBody.credentials) {
         throw new Error('Missing inputs');
       }
@@ -108,7 +109,7 @@ export class Interactor implements UserInteractor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: 'AccessToken',
+          data: 'Authorized',
         }),
       };
       return response;
