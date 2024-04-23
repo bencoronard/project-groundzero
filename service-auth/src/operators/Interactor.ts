@@ -3,13 +3,20 @@ import { Identity, IUser, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
 import { ResponseHTTP } from '../shared/ResponseHTTP';
 import { Payload } from '../shared/Payload';
+import { Hasher } from '../entities/Hasher';
 
 export class Interactor implements UserInteractor {
   private dispatcher: Dispatcher;
   private baseURL: string;
+  private hasher: Hasher;
 
-  constructor(injectedDispatcher: Dispatcher, host: string) {
+  constructor(
+    injectedDispatcher: Dispatcher,
+    injectedHasher: Hasher,
+    host: string
+  ) {
     this.dispatcher = injectedDispatcher;
+    this.hasher = injectedHasher;
     this.baseURL = host;
   }
 
@@ -30,7 +37,9 @@ export class Interactor implements UserInteractor {
           ? new Error('Error checking user record')
           : new Error('User already exists');
       }
-      // implement encrypt passCode here before storing
+      parsedCredentials.passphrase = await this.hasher.hash(
+        parsedCredentials.passphrase
+      );
       const newUser = {
         ...parsedCredentials,
         accessLevel: 'user',
@@ -66,11 +75,10 @@ export class Interactor implements UserInteractor {
       const parsedCredentials: Identity = await User.parseCredentials(
         parsedBody.credentials
       );
-      // implement encrypt passCode here before querying
-      const packet: {
-        match: Identity;
-        update: { session: string };
-      } = {
+      parsedCredentials.passphrase = await this.hasher.hash(
+        parsedCredentials.passphrase
+      );
+      const packet = {
         match: parsedCredentials,
         update: { session: 'token' },
       };
@@ -87,7 +95,7 @@ export class Interactor implements UserInteractor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: 'IdToken',
+          data: 'JWT',
         }),
       };
       return response;
