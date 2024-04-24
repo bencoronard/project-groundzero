@@ -1,17 +1,22 @@
-import { BcryptHasher } from './detachables/BcryptHasher';
+import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
 
-const credentials = { identifier: 'L36J', passCode: '643039' };
-console.log(credentials);
-const user = { ...credentials, accessLevel: 'user' };
-console.log(user);
+// Generate a new RSA key pair
+const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+  modulusLength: 2048,
+  publicKeyEncoding: { type: 'spki', format: 'pem' },
+  privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+});
 
-const bcryptor = new BcryptHasher(10);
+// Sample payload for the JWT token
+const payload = {
+  id: 123,
+  username: 'exampleuser',
+};
 
-(async () => {
-  try {
-    const hashedPassword = await bcryptor.hash(credentials.passCode);
-    console.log('Hashed password:', hashedPassword);
-  } catch (error) {
-    console.error('Error hashing password:', error);
-  }
-})();
+// Sign the JWT token using the private key
+const token = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+
+console.log('Public Key:', publicKey);
+console.log('Private Key:', privateKey);
+console.log('JWT Token:', token);

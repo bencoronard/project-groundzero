@@ -5,7 +5,19 @@ export class CryptoCryptor implements Cryptor {
   constructor() {}
 
   async generateKeyPair(): Promise<{ publicKey: string; privateKey: string }> {
-    return { publicKey: 'abc', privateKey: 'def' };
+    try {
+      let keys = { publicKey: '', privateKey: '' };
+      crypto.generateKeyPair('rsa', 'pem', (err, pubKey, privKey) => {
+        if (err) {
+          throw err;
+        }
+        keys.publicKey = pubKey;
+        keys.privateKey = privKey;
+      });
+      return keys;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async encryptText(plainText: string): Promise<string> {

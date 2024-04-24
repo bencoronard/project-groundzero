@@ -4,20 +4,34 @@ import { UserInteractor } from '../entities/UserInteractor';
 import { ResponseHTTP } from '../shared/ResponseHTTP';
 import { Payload } from '../shared/Payload';
 import { Hasher } from '../entities/Hasher';
+import { Signer } from '../entities/Signer';
+import { Cryptor } from '../entities/Cryptor';
 
 export class Interactor implements UserInteractor {
-  private dispatcher: Dispatcher;
   private baseURL: string;
+  private dispatcher: Dispatcher;
+  private cryptor: Cryptor;
   private hasher: Hasher;
+  private signer: Signer;
+  private publicKey: string;
+  private privateKey: string;
 
   constructor(
+    host: string,
     injectedDispatcher: Dispatcher,
+    injectedCryptor: Cryptor,
     injectedHasher: Hasher,
-    host: string
+    injectedSigner: Signer,
+    publicKey: string,
+    privateKey: string
   ) {
-    this.dispatcher = injectedDispatcher;
-    this.hasher = injectedHasher;
     this.baseURL = host;
+    this.dispatcher = injectedDispatcher;
+    this.cryptor = injectedCryptor;
+    this.hasher = injectedHasher;
+    this.signer = injectedSigner;
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
   }
 
   async createUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP> {
@@ -93,7 +107,11 @@ export class Interactor implements UserInteractor {
           : new Error('Incorrect user credentials');
       }
 
-      const accessToken: void = await Promise.resolve();
+      // extract identifier and authorization as well as duration of the token
+      const accessToken: string = this.signer.signToken(
+        operationResult.data,
+        this.privateKey
+      );
 
       const response: ResponseHTTP = {
         statusCode: 202,
