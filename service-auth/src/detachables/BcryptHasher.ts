@@ -15,9 +15,9 @@ export class BcryptHasher implements Hasher {
       throw error;
     }
   }
-  async compare(cipherText1: string, cipherText2: string): Promise<boolean> {
+  async compare(plainText: string, cipherText: string): Promise<boolean> {
     try {
-      return true;
+      return await bcrypt.compare(plainText, cipherText);
     } catch (error) {
       throw error;
     }

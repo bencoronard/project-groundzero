@@ -1,5 +1,5 @@
 import { Dispatcher } from '../entities/Dispatcher';
-import { Identity, IUser, User } from '../entities/User';
+import { Identity, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
 import { ResponseHTTP } from '../shared/ResponseHTTP';
 import { Payload } from '../shared/Payload';
@@ -87,15 +87,20 @@ export class Interactor implements UserInteractor {
         route,
         packet
       );
-      if (operationResult.isError) {
-        throw new Error('Error authenticating user');
+      if (operationResult.isError || !operationResult.data) {
+        throw operationResult.isError
+          ? new Error('Error authenticating user')
+          : new Error('Incorrect user credentials');
       }
+
+      const accessToken: void = await Promise.resolve();
+
       const response: ResponseHTTP = {
         statusCode: 202,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: 'JWT',
+          data: accessToken,
         }),
       };
       return response;
@@ -104,13 +109,12 @@ export class Interactor implements UserInteractor {
     }
   }
 
-  async authorizeUser(parsedBody: {
+  async authorizeUser(parsedHeader: {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
     try {
-      // if (!parsedHeader.bearerToken) {throw new Error('Missing inputs')}
-      if (!parsedBody.credentials) {
-        throw new Error('Missing inputs');
+      if (!parsedHeader.bearerToken) {
+        throw new Error('Missing Access Token');
       }
       const response: ResponseHTTP = {
         statusCode: 200,
