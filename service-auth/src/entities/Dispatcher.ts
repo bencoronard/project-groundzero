@@ -1,8 +1,8 @@
-import { Payload } from '../shared/Payload';
+import { ParcelUniversal } from '../shared/ParcelUniversal';
 
 export interface Dispatcher {
   dispatch(
     route: { url: string; method: string },
     packet: { [key: string]: any }
-  ): Promise<Payload>;
+  ): Promise<ParcelUniversal>;
 }

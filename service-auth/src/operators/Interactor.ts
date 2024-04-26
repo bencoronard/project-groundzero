@@ -2,7 +2,7 @@ import { Dispatcher } from '../entities/Dispatcher';
 import { Identity, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
 import { ResponseHTTP } from '../shared/ResponseHTTP';
-import { Payload } from '../shared/Payload';
+import { ParcelUniversal } from '../shared/ParcelUniversal';
 import { Hasher } from '../entities/Hasher';
 import { Signer } from '../entities/Signer';
 import { Cipher } from '../entities/Cipher';
@@ -42,11 +42,11 @@ export class Interactor implements UserInteractor {
       const parsedCredentials: Identity = await User.parseCredentials(
         parsedBody.credentials
       );
-      const checkExisting: Payload = await this.dispatcher.dispatch(
+      const checkExisting: ParcelUniversal = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'GET' },
         { identifier: parsedCredentials.identifier, limit: 1 }
       );
-      if (checkExisting.isError || checkExisting.data.length) {
+      if (checkExisting.isError || checkExisting.payload.length) {
         throw checkExisting.isError
           ? new Error('Error checking user record')
           : new Error('User already exists');
@@ -58,7 +58,7 @@ export class Interactor implements UserInteractor {
         ...parsedCredentials,
         accessLevel: 'user',
       };
-      const operationResult: Payload = await this.dispatcher.dispatch(
+      const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'POST' },
         [newUser]
       );
@@ -97,11 +97,11 @@ export class Interactor implements UserInteractor {
         update: { session: 'token' },
       };
       const route = { url: this.baseURL, method: 'PUT' };
-      const operationResult: Payload = await this.dispatcher.dispatch(
+      const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
         route,
         packet
       );
-      if (operationResult.isError || !operationResult.data) {
+      if (operationResult.isError || !operationResult.payload) {
         throw operationResult.isError
           ? new Error('Error authenticating user')
           : new Error('Incorrect user credentials');
@@ -109,7 +109,7 @@ export class Interactor implements UserInteractor {
 
       // extract identifier and authorization as well as duration of the token
       const accessToken: string = this.signer.signToken(
-        operationResult.data,
+        operationResult.payload,
         this.privateKey
       );
 
@@ -134,7 +134,7 @@ export class Interactor implements UserInteractor {
       if (!parsedHeader.bearerToken) {
         throw new Error('Missing Access Token');
       }
-      const operationResult: Payload = this.signer.verifyToken(
+      const operationResult: ParcelUniversal = this.signer.verifyToken(
         parsedHeader.bearerToken,
         this.publicKey
       );
@@ -143,7 +143,7 @@ export class Interactor implements UserInteractor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: operationResult.data,
+          data: operationResult.payload,
         }),
       };
       return response;

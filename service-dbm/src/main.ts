@@ -1,20 +1,30 @@
 import { Server } from './Server';
 
-const server = new Server();
-
-process.on('SIGINT', async () => {
-  try {
-    await server.stop();
-    process.exit(0);
-  } catch (error) {
-    console.error((error as Error).message);
-    process.exit(1);
-  }
-});
-
 try {
+  // Create a server instance
+  const server = new Server();
+  // Handle process termination
+  process.on('SIGINT', async () => {
+    try {
+      // Close connections to database
+      await server.stop();
+      // Terminate process
+      process.exit(0);
+    } catch (error) {
+      // Log errors thrown during connections closing
+      console.error(
+        'Error closing database connections: ',
+        (error as Error).message
+      );
+      // Terminate process
+      process.exit(1);
+    }
+  });
+  // Start the server
   server.start();
-} catch {
-  console.error('Error starting the server');
+} catch (error) {
+  // Log errors thrown during start
+  console.error('Error starting the server: ', (error as Error).message);
+  // Terminate process
   process.exit(1);
 }
