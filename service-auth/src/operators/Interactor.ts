@@ -5,12 +5,12 @@ import { ResponseHTTP } from '../shared/ResponseHTTP';
 import { Payload } from '../shared/Payload';
 import { Hasher } from '../entities/Hasher';
 import { Signer } from '../entities/Signer';
-import { Cryptor } from '../entities/Cryptor';
+import { Cipher } from '../entities/Cipher';
 
 export class Interactor implements UserInteractor {
   private baseURL: string;
   private dispatcher: Dispatcher;
-  private cryptor: Cryptor;
+  private cipher: Cipher;
   private hasher: Hasher;
   private signer: Signer;
   private publicKey: string;
@@ -19,7 +19,7 @@ export class Interactor implements UserInteractor {
   constructor(
     host: string,
     injectedDispatcher: Dispatcher,
-    injectedCryptor: Cryptor,
+    injectedCipher: Cipher,
     injectedHasher: Hasher,
     injectedSigner: Signer,
     publicKey: string,
@@ -27,7 +27,7 @@ export class Interactor implements UserInteractor {
   ) {
     this.baseURL = host;
     this.dispatcher = injectedDispatcher;
-    this.cryptor = injectedCryptor;
+    this.cipher = injectedCipher;
     this.hasher = injectedHasher;
     this.signer = injectedSigner;
     this.publicKey = publicKey;
@@ -134,12 +134,16 @@ export class Interactor implements UserInteractor {
       if (!parsedHeader.bearerToken) {
         throw new Error('Missing Access Token');
       }
+      const operationResult: Payload = this.signer.verifyToken(
+        parsedHeader.bearerToken,
+        this.publicKey
+      );
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: 'Authorized',
+          data: operationResult.data,
         }),
       };
       return response;

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Signer } from '../entities/Signer';
+import { Payload } from '../shared/Payload';
 
 export class JWTSigner implements Signer {
   private options: object;
@@ -13,10 +14,10 @@ export class JWTSigner implements Signer {
       throw error;
     }
   }
-  verifyToken(token: string, key: string): boolean {
+  verifyToken(token: string, key: string): Payload {
     try {
       const payload = jwt.verify(token, key, this.options);
-      return payload ? true : false;
+      return { isError: false, data: payload };
     } catch (error) {
       throw error;
     }

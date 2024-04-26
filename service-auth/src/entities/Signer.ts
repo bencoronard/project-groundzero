@@ -1,4 +1,6 @@
+import { Payload } from '../shared/Payload';
+
 export interface Signer {
   signToken(payload: any, key: string): string;
-  verifyToken(token: string, key: string): boolean;
+  verifyToken(token: string, key: string): Payload;
 }
