@@ -1,4 +1,7 @@
-import { Identity } from './Identity';
+export interface Identity {
+  identifier: string; // i.e. username
+  passphrase: string; // i.e. password
+}
 
 export interface IUser {
   credentials: Identity;
@@ -10,12 +13,12 @@ export class User {
     [key: string]: string;
   }): Promise<Identity> {
     try {
-      const parsedCredentials: Identity = { identifier: '', passCode: '' };
-      if (input.identifier && input.passCode) {
+      const parsedCredentials: Identity = { identifier: '', passphrase: '' };
+      if (input.identifier && input.passphrase) {
         parsedCredentials.identifier = input.identifier.toString();
-        parsedCredentials.passCode = input.passCode.toString();
+        parsedCredentials.passphrase = input.passphrase.toString();
       } else {
-        throw new Error('Could not parse inputs');
+        throw new Error('Incomplete input credentials');
       }
       return parsedCredentials;
     } catch (error) {

@@ -14,64 +14,65 @@ export class Interactor implements RecordInteractor {
   async createRecords(parsedBody: {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
-    if (parsedBody.records) {
-      try {
-        const recordsToCreate: IRecord[] = await Record.parseRecords(
-          parsedBody.records
-        );
-        const recordBundle: IRecord[] = await Record.processRecords(
-          recordsToCreate
-        );
-        const insertedRecords: number =
-          await this.recordRepository.createEntries(recordBundle);
-        const payload: Payload = {
-          desc: 'Number of records created',
-          data: insertedRecords,
-        };
-        const response: ResponseHTTP = {
-          statusCode: 201,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        };
-        return response;
-      } catch (error) {
-        throw error;
+    try {
+      if (!parsedBody.records) {
+        throw new Error('Missing inputs');
       }
-    } else {
-      throw new Error('Missing inputs');
+      const recordsToCreate: IRecord[] = await Record.parseRecords(
+        parsedBody.records
+      );
+      const recordBundle: IRecord[] = await Record.processRecords(
+        recordsToCreate
+      );
+      const insertedRecords: number = await this.recordRepository.createEntries(
+        recordBundle
+      );
+      const payload: Payload = {
+        isError: false,
+        desc: 'Number of records created',
+        data: insertedRecords,
+      };
+      const response: ResponseHTTP = {
+        statusCode: 201,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      };
+      return response;
+    } catch (error) {
+      throw error;
     }
   }
 
   async updateRecords(parsedBody: {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
-    if (parsedBody.match && parsedBody.update) {
-      try {
-        const updateCriteria: Partial<IRecord> =
-          await Record.parseRecordPartial(parsedBody.match);
-        const updateValues: Partial<IRecord> = await Record.parseRecordPartial(
-          parsedBody.update
-        );
-        const updatedRecords: number =
-          await this.recordRepository.updateEntries(
-            updateCriteria,
-            updateValues
-          );
-        const payload: Payload = {
-          desc: 'Number of records updated',
-          data: updatedRecords,
-        };
-        const response: ResponseHTTP = {
-          statusCode: 200,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        };
-        return response;
-      } catch (error) {
-        throw error;
+    try {
+      if (!(parsedBody.match && parsedBody.update)) {
+        throw new Error('Missing inputs');
       }
-    } else {
-      throw new Error('Missing inputs');
+      const updateCriteria: Partial<IRecord> = await Record.parseRecordPartial(
+        parsedBody.match
+      );
+      const updateValues: Partial<IRecord> = await Record.parseRecordPartial(
+        parsedBody.update
+      );
+      const updatedRecords: number = await this.recordRepository.updateEntries(
+        updateCriteria,
+        updateValues
+      );
+      const payload: Payload = {
+        isError: false,
+        desc: 'Number of records updated',
+        data: updatedRecords,
+      };
+      const response: ResponseHTTP = {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      };
+      return response;
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -96,6 +97,7 @@ export class Interactor implements RecordInteractor {
         fetchOffset
       );
       const payload: Payload = {
+        isError: false,
         desc: 'Retrieved records',
         data: fetchedRecords,
       };
@@ -121,6 +123,7 @@ export class Interactor implements RecordInteractor {
         deleteCriteria
       );
       const payload: Payload = {
+        isError: false,
         desc: 'Number of records deleted',
         data: deletedRecords,
       };

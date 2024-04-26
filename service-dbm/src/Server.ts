@@ -79,11 +79,16 @@ export class Server {
         try {
           const reqHTTP = new ExpressHTTP(req);
           const resHTTP = await controller.route(reqHTTP);
-          res.status(resHTTP.statusCode);
-          res.set(resHTTP.headers);
-          res.send(resHTTP.body);
+          res
+            .status(resHTTP.statusCode)
+            .set(resHTTP.headers)
+            .send(resHTTP.body);
         } catch (error) {
-          res.status(500).send((error as Error).message);
+          res.status(500).json({
+            isError: true,
+            desc: 'Error message',
+            data: (error as Error).message,
+          });
         }
       });
 

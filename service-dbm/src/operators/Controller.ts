@@ -11,43 +11,52 @@ export class Controller {
 
   async route(request: RequestHTTP): Promise<ResponseHTTP> {
     try {
-      let response: ResponseHTTP = {
-        statusCode: 400,
-        headers: { 'Content-Type': 'text/plain' },
-        body: 'Invalid request',
-      };
       switch (request.method.toUpperCase()) {
         case 'GET':
-          if (request.queryParams) {
-            response = await this.recordInteractor.fetchRecords(
-              request.queryParams
-            );
+          if (!request.queryParams) {
+            throw new Error('Missing query parameters');
           }
-          break;
+          return await this.recordInteractor.fetchRecords(request.queryParams);
 
         case 'POST':
-          if (request.body) {
-            response = await this.recordInteractor.createRecords(request.body);
+          if (!request.body) {
+            throw new Error('Missing request body');
           }
-          break;
+          return await this.recordInteractor.createRecords(request.body);
 
         case 'PUT':
-          if (request.body) {
-            response = await this.recordInteractor.updateRecords(request.body);
+          if (!request.body) {
+            throw new Error('Missing request body');
           }
-          break;
+          return await this.recordInteractor.updateRecords(request.body);
 
         case 'DELETE':
-          if (request.queryParams) {
-            response = await this.recordInteractor.deleteRecords(
-              request.queryParams
-            );
+          if (!request.queryParams) {
+            throw new Error('Missing query parameters');
           }
-          break;
+          return await this.recordInteractor.deleteRecords(request.queryParams);
+
+        default:
+          return {
+            statusCode: 404,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              isError: true,
+              desc: 'Error message',
+              data: 'Invalid request',
+            }),
+          };
       }
-      return response;
     } catch (error) {
-      throw error;
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isError: true,
+          desc: 'Error message',
+          data: (error as Error).message,
+        }),
+      };
     }
   }
 }
