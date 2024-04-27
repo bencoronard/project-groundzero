@@ -13,9 +13,9 @@ export class StorageMongoDB implements RecordRepository {
       this.client = new mongo.MongoClient(config.uri);
       // Connect MongoDB client
       this.client.connect();
-      // Select default schema
+      // Default schema
       this.database = config.database;
-      // Select default collection
+      // Default collection
       this.collection = this.client
         .db(this.database)
         .collection(config.collection);

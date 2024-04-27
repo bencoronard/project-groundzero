@@ -6,7 +6,7 @@ export class Controller {
   private recordInteractor: RecordInteractor;
 
   constructor(injectedInteractor: RecordInteractor) {
-    // Receive injected Interactor
+    // Injected Interactor
     this.recordInteractor = injectedInteractor;
   }
 

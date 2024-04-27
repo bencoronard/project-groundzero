@@ -25,46 +25,62 @@ export class Interactor implements UserInteractor {
     publicKey: string,
     privateKey: string
   ) {
+    // Base URL
     this.baseURL = host;
+    // Injected Dispatcher
     this.dispatcher = injectedDispatcher;
+    // Injected Cipher
     this.cipher = injectedCipher;
+    // Injected Hasher
     this.hasher = injectedHasher;
+    // Injected Signer
     this.signer = injectedSigner;
+    // Public key
     this.publicKey = publicKey;
+    // Private key
     this.privateKey = privateKey;
   }
 
   async createUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP> {
     try {
+      // Check missing inputs
       if (!parsedBody.credentials) {
         throw new Error('Missing inputs');
       }
+      // Parse input credentials
       const parsedCredentials: Identity = await User.parseCredentials(
         parsedBody.credentials
       );
+      // Check if user already exists
       const checkExisting: ParcelUniversal = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'GET' },
         { identifier: parsedCredentials.identifier, limit: 1 }
       );
+      // Check operation result
       if (checkExisting.isError || checkExisting.payload.length) {
         throw checkExisting.isError
           ? new Error('Error checking user record')
           : new Error('User already exists');
       }
+      // Hash passphrase
       parsedCredentials.passphrase = await this.hasher.hash(
         parsedCredentials.passphrase
       );
+      // Construct new user record
       const newUser = {
         ...parsedCredentials,
         accessLevel: 'user',
       };
+      // Send user record to database to store
       const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'POST' },
         [newUser]
       );
+      // Check operation result
       if (operationResult.isError) {
         throw new Error('Unable to create new user');
       }
+      // Construct response
       const response: ResponseHTTP = {
         statusCode: 201,
         headers: { 'Content-Type': 'application/json' },
@@ -73,9 +89,11 @@ export class Interactor implements UserInteractor {
           data: 'New user created',
         }),
       };
+      // Return successful response
       return response;
     } catch (error) {
-      throw error;
+      // Operation failed
+      throw new Error('Error creating new user: ' + (error as Error).message);
     }
   }
 
@@ -83,36 +101,43 @@ export class Interactor implements UserInteractor {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
     try {
+      // Check missing inputs
       if (!parsedBody.credentials) {
         throw new Error('Missing inputs');
       }
+      // Parse input credentials
       const parsedCredentials: Identity = await User.parseCredentials(
         parsedBody.credentials
       );
+      // Hash passphrase
       parsedCredentials.passphrase = await this.hasher.hash(
         parsedCredentials.passphrase
       );
+      // Create request parcel to send to database
       const packet = {
         match: parsedCredentials,
         update: { session: 'token' },
       };
+      // Create request route
       const route = { url: this.baseURL, method: 'PUT' };
+      // Send parcel to database
       const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
         route,
         packet
       );
+      // Check operation result
       if (operationResult.isError || !operationResult.payload) {
         throw operationResult.isError
           ? new Error('Error authenticating user')
           : new Error('Incorrect user credentials');
       }
 
-      // extract identifier and authorization as well as duration of the token
+      // Todo: extract identifier and authorization as well as duration of the token
       const accessToken: string = this.signer.signToken(
         operationResult.payload,
         this.privateKey
       );
-
+      // Construct response
       const response: ResponseHTTP = {
         statusCode: 202,
         headers: { 'Content-Type': 'application/json' },
@@ -121,9 +146,11 @@ export class Interactor implements UserInteractor {
           data: accessToken,
         }),
       };
+      // Return successful response
       return response;
     } catch (error) {
-      throw error;
+      // Operation failed
+      throw new Error('Error authenticating user: ' + (error as Error).message);
     }
   }
 
@@ -131,13 +158,16 @@ export class Interactor implements UserInteractor {
     [key: string]: any;
   }): Promise<ResponseHTTP> {
     try {
+      // Check missing inputs
       if (!parsedHeader.bearerToken) {
         throw new Error('Missing Access Token');
       }
+      // Verify token
       const operationResult: ParcelUniversal = this.signer.verifyToken(
         parsedHeader.bearerToken,
         this.publicKey
       );
+      // Construct response
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -146,9 +176,11 @@ export class Interactor implements UserInteractor {
           data: operationResult.payload,
         }),
       };
+      // Return successful response
       return response;
     } catch (error) {
-      throw error;
+      // Operation failed
+      throw new Error('Error authorizing user: ' + (error as Error).message);
     }
   }
 }

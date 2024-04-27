@@ -22,9 +22,9 @@ export class StorageMySQL implements RecordRepository {
         password: config.password,
         database: config.database,
       });
-      // Select default schema
+      // Default schema
       this.database = config.database;
-      // Select default table
+      // Default table
       this.table = config.table;
     } catch (error) {
       // MySQL database connection failed

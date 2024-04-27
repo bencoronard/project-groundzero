@@ -8,7 +8,7 @@ export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
 
   constructor(injectedRepository: RecordRepository) {
-    // Receive injected database
+    // Injected database
     this.recordRepository = injectedRepository;
   }
 
