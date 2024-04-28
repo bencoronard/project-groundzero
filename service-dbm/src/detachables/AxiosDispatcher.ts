@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Dispatcher } from '../shared/Dispatcher';
-import { ParcelUniversal } from '../shared/Parcel';
+import { Parcel, IParcel } from '../shared/Parcel';
 
 export class AxiosDispatcher implements Dispatcher {
   constructor() {}
@@ -8,8 +8,9 @@ export class AxiosDispatcher implements Dispatcher {
   async dispatch(
     route: { url: string; method: string },
     packet: { [key: string]: any }
-  ): Promise<ParcelUniversal> {
-    let response: ParcelUniversal = { isError: true, payload: null };
+  ): Promise<IParcel> {
+    // Initialize response
+    let response: IParcel = new Parcel().pack();
     try {
       // Route requests based on method
       switch (route.method.toUpperCase()) {
@@ -23,6 +24,7 @@ export class AxiosDispatcher implements Dispatcher {
             .catch((err) => {
               response = err.response.data;
             });
+
           break;
 
         case 'POST':
@@ -65,11 +67,13 @@ export class AxiosDispatcher implements Dispatcher {
           // Request method out of scope
           throw new Error('Dispatch method out of scope');
       }
+      // Return successful response
       return response;
     } catch (error) {
-      // Formulate return payload when error occurs
+      // Set error response
       response.description = 'Error message';
       response.payload = (error as Error).message;
+      // Return error response
       return response;
     }
   }

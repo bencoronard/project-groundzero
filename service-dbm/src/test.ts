@@ -1,7 +1,7 @@
 import { AxiosDispatcher } from './detachables/AxiosDispatcher';
 import dotenv from 'dotenv';
 import path from 'path';
-import { ParcelUniversal } from './shared/Parcel';
+import { IParcel } from './shared/Parcel';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 const PORT = process.env.PORT;
@@ -15,15 +15,15 @@ const queryParams: { [key: string]: any } = {
   offset: 0,
 };
 
-// const updateData = {
-//   match: { field4: 'TH' },
-//   update: { field3: 'Sawasdee' },
-// };
-
 const updateData = {
   match: { field4: 'TH' },
-  update: {},
+  update: { field3: 'Sawasdee' },
 };
+
+// const updateData = {
+//   match: { field4: 'TH' },
+//   update: {},
+// };
 
 const postData = {
   records: [
@@ -57,7 +57,7 @@ const postData = {
 test();
 
 async function test() {
-  let operationResult: ParcelUniversal;
+  let operationResult: IParcel;
 
   operationResult = await dispatcher.dispatch(
     { url: baseUrl, method: 'POST' },

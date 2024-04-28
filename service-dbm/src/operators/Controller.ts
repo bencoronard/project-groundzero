@@ -1,6 +1,6 @@
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { RequestHTTP } from '../shared/RequestHTTP';
-import { ResponseHTTP } from '../shared/ResponseHTTP';
+import { IResponseHTTP, ResponseHTTP } from '../shared/ResponseHTTP';
 
 export class Controller {
   private recordInteractor: RecordInteractor;
@@ -10,7 +10,7 @@ export class Controller {
     this.recordInteractor = injectedInteractor;
   }
 
-  async route(request: RequestHTTP): Promise<ResponseHTTP> {
+  async route(request: RequestHTTP): Promise<IResponseHTTP> {
     try {
       // Route request based on method
       switch (request.method.toUpperCase()) {
@@ -55,16 +55,15 @@ export class Controller {
           throw new Error('Invalid request method');
       }
     } catch (error) {
-      // Return error response from Controller
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          isError: true,
-          description: 'Error message',
-          payload: (error as Error).message,
-        },
-      };
+      // Initialize response
+      const response: ResponseHTTP = new ResponseHTTP();
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload((error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 }

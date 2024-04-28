@@ -9,7 +9,7 @@ export interface IResponseHTTP {
 export class ResponseHTTP {
   private statusCode: number;
   private headers: { [key: string]: string };
-  private body: IParcel;
+  private body: Parcel;
 
   constructor() {
     // Default statusCode
@@ -17,7 +17,7 @@ export class ResponseHTTP {
     // Default headers
     this.headers = { 'Content-Type': 'application/json' };
     // Default body
-    this.body = new Parcel().pack();
+    this.body = new Parcel();
   }
 
   setStatus(value: number): this {
@@ -30,17 +30,17 @@ export class ResponseHTTP {
     this.headers = value;
     return this;
   }
-  setBody(value: IParcel): this {
-    // Set body
-    this.body = value;
-    return this;
+  getBody(): Parcel {
+    // Expose body
+    return this.body;
   }
+
   seal(): IResponseHTTP {
     // Return all attribute values
     return {
       statusCode: this.statusCode,
       headers: this.headers,
-      body: this.body,
+      body: this.body.pack(),
     };
   }
 }

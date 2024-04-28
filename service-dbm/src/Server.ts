@@ -7,7 +7,7 @@ import { Controller } from './operators/Controller';
 import { RecordRepository } from './entities/RecordRepository';
 import { StorageMySQL } from './detachables/StorageMySQL';
 import { StorageMongoDB } from './detachables/StorageMongoDB';
-import { ResponseHTTP } from './shared/ResponseHTTP';
+import { IResponseHTTP } from './shared/ResponseHTTP';
 import { RequestHTTP } from './shared/RequestHTTP';
 
 export class Server {
@@ -103,7 +103,7 @@ export class Server {
           // Adapt request object from Express
           const reqHTTP: RequestHTTP = new ExpressHTTP(req);
           // Route request and await response
-          const resHTTP: ResponseHTTP = await controller.route(reqHTTP);
+          const resHTTP: IResponseHTTP = await controller.route(reqHTTP);
           // Send successful response
           res
             .status(resHTTP.statusCode)

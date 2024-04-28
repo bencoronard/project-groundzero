@@ -1,8 +1,7 @@
 import { Record, IRecord } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import { RecordInteractor } from '../entities/RecordInteractor';
-import { ResponseHTTP } from '../shared/ResponseHTTP';
-import { Parcel } from '../shared/Parcel';
+import { ResponseHTTP, IResponseHTTP } from '../shared/ResponseHTTP';
 
 export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
@@ -14,7 +13,9 @@ export class Interactor implements RecordInteractor {
 
   async createRecords(parsedBody: {
     [key: string]: any;
-  }): Promise<ResponseHTTP> {
+  }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Check missing inputs
       if (!parsedBody.records) {
@@ -32,39 +33,31 @@ export class Interactor implements RecordInteractor {
       const insertedRecords: number = await this.recordRepository.createEntries(
         recordBundle
       );
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: false,
-        description: 'Number of records created',
-        payload: insertedRecords,
-      };
-      // Construct response
-      const response: ResponseHTTP = {
-        statusCode: 201,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set successful response
+      response
+        .setStatus(201)
+        .getBody()
+        .setError(false)
+        .setDesc('Number of records created')
+        .setPayload(insertedRecords);
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: true,
-        description: 'Error message',
-        payload: 'Error creating records: ' + (error as Error).message,
-      };
-      // Return unsuccesssful response
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error creating records: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 
   async updateRecords(parsedBody: {
     [key: string]: any;
-  }): Promise<ResponseHTTP> {
+  }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Check missing inputs
       if (!(parsedBody.match && parsedBody.update)) {
@@ -83,39 +76,31 @@ export class Interactor implements RecordInteractor {
         updateCriteria,
         updateValues
       );
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: false,
-        description: 'Number of records updated',
-        payload: updatedRecords,
-      };
-      // Construct response
-      const response: ResponseHTTP = {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set successful response
+      response
+        .setStatus(200)
+        .getBody()
+        .setError(false)
+        .setDesc('Number of records updated')
+        .setPayload(updatedRecords);
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: true,
-        description: 'Error message',
-        payload: 'Error creating records: ' + (error as Error).message,
-      };
-      // Return unsuccesssful response
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error creating records: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 
   async fetchRecords(parsedQuery: {
     [key: string]: any;
-  }): Promise<ResponseHTTP> {
+  }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Parse fetch criteria
       const fetchCriteria: Partial<IRecord> = await Record.parseRecordPartial(
@@ -137,39 +122,31 @@ export class Interactor implements RecordInteractor {
         fetchLimit,
         fetchOffset
       );
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: false,
-        description: 'Retrieved records',
-        payload: fetchedRecords,
-      };
-      // Construct response
-      const response: ResponseHTTP = {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set successful response
+      response
+        .setStatus(200)
+        .getBody()
+        .setError(false)
+        .setDesc('Retrieved records')
+        .setPayload(fetchedRecords);
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: true,
-        description: 'Error message',
-        payload: 'Error creating records: ' + (error as Error).message,
-      };
-      // Return unsuccesssful response
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error creating records: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 
   async deleteRecords(parsedQuery: {
     [key: string]: any;
-  }): Promise<ResponseHTTP> {
+  }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Parse delete criteria
       const deleteCriteria: Partial<IRecord> = await Record.parseRecordPartial(
@@ -179,33 +156,23 @@ export class Interactor implements RecordInteractor {
       const deletedRecords: number = await this.recordRepository.deleteEntries(
         deleteCriteria
       );
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: false,
-        description: 'Number of records deleted',
-        payload: deletedRecords,
-      };
-      // Construct response
-      const response: ResponseHTTP = {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set successful response
+      response
+        .setStatus(200)
+        .getBody()
+        .setError(false)
+        .setDesc('Number of records deleted')
+        .setPayload(deletedRecords);
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Generate operation result packet for response
-      const parcel: Parcel = {
-        isError: true,
-        description: 'Error message',
-        payload: 'Error creating records: ' + (error as Error).message,
-      };
-      // Return unsuccesssful response
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: parcel,
-      };
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error creating records: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 }
