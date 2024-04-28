@@ -108,13 +108,13 @@ export class Server {
           res
             .status(resHTTP.statusCode)
             .set(resHTTP.headers)
-            .send(resHTTP.body);
+            .json(resHTTP.body);
         } catch (error) {
           // Catch errors during operations and send as response
           res.status(500).json({
             isError: true,
             description: 'Error message',
-            payload: (error as Error).message,
+            payload: 'Internal server error',
           });
         }
       });

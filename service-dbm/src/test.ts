@@ -74,6 +74,7 @@ async function test() {
     .catch((error) => {
       console.error('Error:', error.response.data);
     });
+  // Returns error
   await axios
     .put(baseUrl, updateData)
     .then((response) => {

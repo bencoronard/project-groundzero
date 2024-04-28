@@ -17,12 +17,12 @@ const queryParams: { [key: string]: any } = {
 
 // const updateData = {
 //   match: { field4: 'TH' },
-//   update: {},
+//   update: { field3: 'Sawasdee' },
 // };
 
 const updateData = {
   match: { field4: 'TH' },
-  update: { field3: 'Sawasdee' },
+  update: {},
 };
 
 const postData = {
@@ -58,24 +58,40 @@ test();
 
 async function test() {
   let operationResult: ParcelUniversal;
+
   operationResult = await dispatcher.dispatch(
     { url: baseUrl, method: 'POST' },
     postData
   );
-  console.log(operationResult);
+  console.log('Response:\n', operationResult);
+
   operationResult = await dispatcher.dispatch(
     { url: baseUrl, method: 'GET' },
     queryParams
   );
-  console.log(operationResult);
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'PUT' },
+    updateData
+  );
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'GET' },
+    queryParams
+  );
+  console.log('Response:\n', operationResult);
+
   operationResult = await dispatcher.dispatch(
     { url: baseUrl, method: 'DELETE' },
     queryParams
   );
-  console.log(operationResult);
+  console.log('Response:\n', operationResult);
+
   operationResult = await dispatcher.dispatch(
     { url: baseUrl, method: 'GET' },
     queryParams
   );
-  console.log(operationResult);
+  console.log('Response:\n', operationResult);
 }

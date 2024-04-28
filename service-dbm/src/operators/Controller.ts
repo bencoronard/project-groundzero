@@ -55,11 +55,11 @@ export class Controller {
           return {
             statusCode: 404,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            body: {
               isError: true,
               description: 'Error message',
               payload: 'Invalid request',
-            }),
+            },
           };
       }
     } catch (error) {
@@ -67,11 +67,11 @@ export class Controller {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           isError: true,
           description: 'Error message',
           payload: (error as Error).message,
-        }),
+        },
       };
     }
   }

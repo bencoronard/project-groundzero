@@ -42,7 +42,7 @@ export class Interactor implements RecordInteractor {
       const response: ResponseHTTP = {
         statusCode: 201,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parcel),
+        body: parcel,
       };
       // Return successful response
       return response;
@@ -83,7 +83,7 @@ export class Interactor implements RecordInteractor {
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parcel),
+        body: parcel,
       };
       // Return successful response
       return response;
@@ -127,7 +127,7 @@ export class Interactor implements RecordInteractor {
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parcel),
+        body: parcel,
       };
       // Return successful response
       return response;
@@ -159,7 +159,7 @@ export class Interactor implements RecordInteractor {
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parcel),
+        body: parcel,
       };
       // Return successful response
       return response;
