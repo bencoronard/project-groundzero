@@ -52,18 +52,10 @@ export class Controller {
 
         default:
           // Request method out of scope
-          return {
-            statusCode: 404,
-            headers: { 'Content-Type': 'application/json' },
-            body: {
-              isError: true,
-              description: 'Error message',
-              payload: 'Invalid request',
-            },
-          };
+          throw new Error('Invalid request method');
       }
     } catch (error) {
-      // Catch errors thrown from Interactor and return error response
+      // Return error response from Controller
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },

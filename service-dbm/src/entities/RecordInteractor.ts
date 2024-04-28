@@ -1,11 +1,11 @@
-import { ResponseHTTP } from '../shared/ResponseHTTP';
+import { IResponseHTTP } from '../shared/ResponseHTTP';
 
 export interface RecordInteractor {
-  createRecords(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
+  createRecords(parsedBody: { [key: string]: any }): Promise<IResponseHTTP>;
 
-  fetchRecords(parsedQuery: { [key: string]: any }): Promise<ResponseHTTP>;
+  fetchRecords(parsedQuery: { [key: string]: any }): Promise<IResponseHTTP>;
 
-  updateRecords(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
+  updateRecords(parsedBody: { [key: string]: any }): Promise<IResponseHTTP>;
 
-  deleteRecords(parsedQuery: { [key: string]: any }): Promise<ResponseHTTP>;
+  deleteRecords(parsedQuery: { [key: string]: any }): Promise<IResponseHTTP>;
 }

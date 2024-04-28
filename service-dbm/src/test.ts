@@ -1,12 +1,13 @@
-import axios from 'axios';
+import { AxiosDispatcher } from './detachables/AxiosDispatcher';
 import dotenv from 'dotenv';
 import path from 'path';
+import { ParcelUniversal } from './shared/Parcel';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
-
 const PORT = process.env.PORT;
-
 const baseUrl = `http://localhost:${PORT}/records`;
+
+const dispatcher = new AxiosDispatcher();
 
 const queryParams: { [key: string]: any } = {
   field4: 'TH',
@@ -14,14 +15,12 @@ const queryParams: { [key: string]: any } = {
   offset: 0,
 };
 
-let updateData: object;
-
-// updateData = {
+// const updateData = {
 //   match: { field4: 'TH' },
 //   update: { field3: 'Sawasdee' },
 // };
 
-updateData = {
+const updateData = {
   match: { field4: 'TH' },
   update: {},
 };
@@ -58,53 +57,41 @@ const postData = {
 test();
 
 async function test() {
-  await axios
-    .post(baseUrl, postData)
-    .then((response) => {
-      console.log('Response:', response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.response.data);
-    });
-  await axios
-    .get(baseUrl, { params: queryParams })
-    .then((response) => {
-      console.log(`Response:\n`, response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.response.data);
-    });
-  // Returns error
-  await axios
-    .put(baseUrl, updateData)
-    .then((response) => {
-      console.log('Response:', response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.response.data);
-    });
-  await axios
-    .get(baseUrl, { params: queryParams })
-    .then((response) => {
-      console.log(`Response:\n`, response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.response.data);
-    });
-  await axios
-    .delete(baseUrl, { params: queryParams })
-    .then((response) => {
-      console.log('Response:', response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.response.data);
-    });
-  await axios
-    .get(baseUrl, { params: queryParams })
-    .then((response) => {
-      console.log(`Response:\n`, response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.response.data);
-    });
+  let operationResult: ParcelUniversal;
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'POST' },
+    postData
+  );
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'GET' },
+    queryParams
+  );
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'PUT' },
+    updateData
+  );
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'GET' },
+    queryParams
+  );
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'DELETE' },
+    queryParams
+  );
+  console.log('Response:\n', operationResult);
+
+  operationResult = await dispatcher.dispatch(
+    { url: baseUrl, method: 'GET' },
+    queryParams
+  );
+  console.log('Response:\n', operationResult);
 }

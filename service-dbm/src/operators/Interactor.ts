@@ -2,7 +2,7 @@ import { Record, IRecord } from '../entities/Record';
 import { RecordRepository } from '../entities/RecordRepository';
 import { RecordInteractor } from '../entities/RecordInteractor';
 import { ResponseHTTP } from '../shared/ResponseHTTP';
-import { ParcelUniversal } from '../shared/ParcelUniversal';
+import { Parcel } from '../shared/Parcel';
 
 export class Interactor implements RecordInteractor {
   private recordRepository: RecordRepository;
@@ -33,7 +33,7 @@ export class Interactor implements RecordInteractor {
         recordBundle
       );
       // Generate operation result packet for response
-      const parcel: ParcelUniversal = {
+      const parcel: Parcel = {
         isError: false,
         description: 'Number of records created',
         payload: insertedRecords,
@@ -47,8 +47,18 @@ export class Interactor implements RecordInteractor {
       // Return successful response
       return response;
     } catch (error) {
-      // Operation failed
-      throw new Error('Error creating records: ' + (error as Error).message);
+      // Generate operation result packet for response
+      const parcel: Parcel = {
+        isError: true,
+        description: 'Error message',
+        payload: 'Error creating records: ' + (error as Error).message,
+      };
+      // Return unsuccesssful response
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: parcel,
+      };
     }
   }
 
@@ -74,7 +84,7 @@ export class Interactor implements RecordInteractor {
         updateValues
       );
       // Generate operation result packet for response
-      const parcel: ParcelUniversal = {
+      const parcel: Parcel = {
         isError: false,
         description: 'Number of records updated',
         payload: updatedRecords,
@@ -88,8 +98,18 @@ export class Interactor implements RecordInteractor {
       // Return successful response
       return response;
     } catch (error) {
-      // Operation failed
-      throw new Error('Error updating records: ' + (error as Error).message);
+      // Generate operation result packet for response
+      const parcel: Parcel = {
+        isError: true,
+        description: 'Error message',
+        payload: 'Error creating records: ' + (error as Error).message,
+      };
+      // Return unsuccesssful response
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: parcel,
+      };
     }
   }
 
@@ -118,7 +138,7 @@ export class Interactor implements RecordInteractor {
         fetchOffset
       );
       // Generate operation result packet for response
-      const parcel: ParcelUniversal = {
+      const parcel: Parcel = {
         isError: false,
         description: 'Retrieved records',
         payload: fetchedRecords,
@@ -132,8 +152,18 @@ export class Interactor implements RecordInteractor {
       // Return successful response
       return response;
     } catch (error) {
-      // Operation failed
-      throw new Error('Error fetching records: ' + (error as Error).message);
+      // Generate operation result packet for response
+      const parcel: Parcel = {
+        isError: true,
+        description: 'Error message',
+        payload: 'Error creating records: ' + (error as Error).message,
+      };
+      // Return unsuccesssful response
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: parcel,
+      };
     }
   }
 
@@ -150,7 +180,7 @@ export class Interactor implements RecordInteractor {
         deleteCriteria
       );
       // Generate operation result packet for response
-      const parcel: ParcelUniversal = {
+      const parcel: Parcel = {
         isError: false,
         description: 'Number of records deleted',
         payload: deletedRecords,
@@ -164,8 +194,18 @@ export class Interactor implements RecordInteractor {
       // Return successful response
       return response;
     } catch (error) {
-      // Operation failed
-      throw new Error('Error deleting records: ' + (error as Error).message);
+      // Generate operation result packet for response
+      const parcel: Parcel = {
+        isError: true,
+        description: 'Error message',
+        payload: 'Error creating records: ' + (error as Error).message,
+      };
+      // Return unsuccesssful response
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: parcel,
+      };
     }
   }
 }

@@ -11,7 +11,6 @@ import { Authorization } from '../entities/Authorization';
 export class Interactor implements UserInteractor {
   private baseURL: string;
   private dispatcher: Dispatcher;
-  private cipher: Cipher;
   private hasher: Hasher;
   private signer: Signer;
   private publicKey: string;
@@ -20,7 +19,6 @@ export class Interactor implements UserInteractor {
   constructor(
     host: string,
     injectedDispatcher: Dispatcher,
-    injectedCipher: Cipher,
     injectedHasher: Hasher,
     injectedSigner: Signer,
     publicKey: string,
@@ -30,8 +28,6 @@ export class Interactor implements UserInteractor {
     this.baseURL = host;
     // Injected Dispatcher
     this.dispatcher = injectedDispatcher;
-    // Injected Cipher
-    this.cipher = injectedCipher;
     // Injected Hasher
     this.hasher = injectedHasher;
     // Injected Signer
@@ -86,10 +82,10 @@ export class Interactor implements UserInteractor {
       const response: ResponseHTTP = {
         statusCode: 201,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           isError: false,
           payload: 'New user created',
-        }),
+        },
       };
       // Return successful response
       return response;
@@ -150,10 +146,10 @@ export class Interactor implements UserInteractor {
       const response: ResponseHTTP = {
         statusCode: 202,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           isError: false,
           payload: accessToken,
-        }),
+        },
       };
       // Return successful response
       return response;
@@ -180,10 +176,10 @@ export class Interactor implements UserInteractor {
       const response: ResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           isError: false,
           payload: operationResult.payload,
-        }),
+        },
       };
       // Return successful response
       return response;

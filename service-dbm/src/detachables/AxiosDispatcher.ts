@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Dispatcher } from '../shared/Dispatcher';
-import { ParcelUniversal } from '../shared/ParcelUniversal';
+import { ParcelUniversal } from '../shared/Parcel';
 
 export class AxiosDispatcher implements Dispatcher {
   constructor() {}
