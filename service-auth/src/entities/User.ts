@@ -1,3 +1,5 @@
+import { IAuthorization } from './Authorization';
+
 export interface Identity {
   identifier: string; // i.e. username
   passphrase: string; // i.e. password
@@ -5,13 +7,12 @@ export interface Identity {
 
 export interface IUser {
   credentials: Identity;
-  accessLevel: string;
+  permissions: IAuthorization;
+  lastAuthenticated: number;
 }
 
 export class User {
-  static async parseCredentials(input: {
-    [key: string]: string;
-  }): Promise<Identity> {
+  static parseCredentials(input: { [key: string]: string }): Identity {
     try {
       // Initialize empty credential object
       const parsedCredentials: Identity = { identifier: '', passphrase: '' };
@@ -31,5 +32,9 @@ export class User {
       // Propagate errors thrown during credential parsing
       throw error;
     }
+  }
+  static flatten(input: IUser) {
+    // Flatten user object for storage
+    return { ...input.credentials, permissions: input.permissions };
   }
 }

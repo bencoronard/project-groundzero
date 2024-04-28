@@ -26,6 +26,8 @@ export class CryptoCipher implements Cipher {
       const buffer = Buffer.from(plainText, 'utf-8');
       // Encrypt binary string
       const encrypted = crypto.publicEncrypt(key, buffer);
+      // const encrypted = crypto.privateEncrypt(key, buffer);
+
       // Return encrypted binary string as text
       return encrypted.toString('base64');
     } catch {
@@ -40,6 +42,8 @@ export class CryptoCipher implements Cipher {
       const buffer = Buffer.from(cipherText, 'base64');
       // Decrypt binary string
       const decrypted = crypto.privateDecrypt(key, buffer);
+      // const decrypted = crypto.publicDecrypt(key, buffer);
+
       // Return decrypted binary string as text
       return decrypted.toString('utf-8');
     } catch {

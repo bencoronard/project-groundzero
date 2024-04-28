@@ -1,4 +1,4 @@
-import { ParcelUniversal } from '../shared/ParcelUniversal';
+import { ParcelUniversal } from './ParcelUniversal';
 
 export interface Dispatcher {
   dispatch(

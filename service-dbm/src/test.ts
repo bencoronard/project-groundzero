@@ -1,7 +1,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const PORT = process.env.PORT;
 
@@ -13,9 +14,16 @@ const queryParams: { [key: string]: any } = {
   offset: 0,
 };
 
-const updateData = {
+let updateData: object;
+
+// updateData = {
+//   match: { field4: 'TH' },
+//   update: { field3: 'Sawasdee' },
+// };
+
+updateData = {
   match: { field4: 'TH' },
-  update: { field3: 'Sawasdee' },
+  update: {},
 };
 
 const postData = {

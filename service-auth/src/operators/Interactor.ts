@@ -1,11 +1,12 @@
-import { Dispatcher } from '../entities/Dispatcher';
-import { Identity, User } from '../entities/User';
+import { Dispatcher } from '../shared/Dispatcher';
+import { IUser, Identity, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
 import { ResponseHTTP } from '../shared/ResponseHTTP';
 import { ParcelUniversal } from '../shared/ParcelUniversal';
 import { Hasher } from '../entities/Hasher';
 import { Signer } from '../entities/Signer';
 import { Cipher } from '../entities/Cipher';
+import { Authorization } from '../entities/Authorization';
 
 export class Interactor implements UserInteractor {
   private baseURL: string;
@@ -48,7 +49,7 @@ export class Interactor implements UserInteractor {
         throw new Error('Missing inputs');
       }
       // Parse input credentials
-      const parsedCredentials: Identity = await User.parseCredentials(
+      const parsedCredentials: Identity = User.parseCredentials(
         parsedBody.credentials
       );
       // Check if user already exists
@@ -67,14 +68,15 @@ export class Interactor implements UserInteractor {
         parsedCredentials.passphrase
       );
       // Construct new user record
-      const newUser = {
-        ...parsedCredentials,
-        accessLevel: 'user',
+      const newUser: IUser = {
+        credentials: parsedCredentials,
+        permissions: Authorization.user(),
+        lastAuthenticated: Date.now(),
       };
       // Send user record to database to store
       const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'POST' },
-        [newUser]
+        [User.flatten(newUser)]
       );
       // Check operation result
       if (operationResult.isError) {
@@ -86,7 +88,7 @@ export class Interactor implements UserInteractor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: 'New user created',
+          payload: 'New user created',
         }),
       };
       // Return successful response
@@ -106,7 +108,7 @@ export class Interactor implements UserInteractor {
         throw new Error('Missing inputs');
       }
       // Parse input credentials
-      const parsedCredentials: Identity = await User.parseCredentials(
+      const parsedCredentials: Identity = User.parseCredentials(
         parsedBody.credentials
       );
       // Hash passphrase
@@ -116,13 +118,11 @@ export class Interactor implements UserInteractor {
       // Create request parcel to send to database
       const packet = {
         match: parsedCredentials,
-        update: { session: 'token' },
+        update: { lastAuthenticated: Date.now() },
       };
-      // Create request route
-      const route = { url: this.baseURL, method: 'PUT' };
       // Send parcel to database
-      const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
-        route,
+      let operationResult: ParcelUniversal = await this.dispatcher.dispatch(
+        { url: this.baseURL, method: 'PUT' },
         packet
       );
       // Check operation result
@@ -131,10 +131,19 @@ export class Interactor implements UserInteractor {
           ? new Error('Error authenticating user')
           : new Error('Incorrect user credentials');
       }
-
-      // Todo: extract identifier and authorization as well as duration of the token
+      // Fetch permissions
+      operationResult = await this.dispatcher.dispatch(
+        { url: this.baseURL, method: 'GET' },
+        { identifier: parsedCredentials.identifier, limit: 1 }
+      );
+      // Construct token payload
+      const payload = {
+        user: parsedCredentials.identifier,
+        permissions: operationResult.payload[0].permissions,
+      };
+      // Sign token payload
       const accessToken: string = this.signer.signToken(
-        operationResult.payload,
+        payload,
         this.privateKey
       );
       // Construct response
@@ -143,7 +152,7 @@ export class Interactor implements UserInteractor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: accessToken,
+          payload: accessToken,
         }),
       };
       // Return successful response
@@ -173,7 +182,7 @@ export class Interactor implements UserInteractor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           isError: false,
-          data: operationResult.payload,
+          payload: operationResult.payload,
         }),
       };
       // Return successful response
