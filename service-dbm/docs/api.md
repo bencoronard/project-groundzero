@@ -27,4 +27,3 @@ The API endpoints handle CRUD operations in a RESTful manner:
 ## Future
 
 - Create access control after 'service-auth' microservice has been implemented
-- Rehandle errors to conceal the architecture of the database
