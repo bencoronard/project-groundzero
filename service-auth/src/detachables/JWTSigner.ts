@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Signer } from '../entities/Signer';
 import { IParcel } from '../shared/Parcel';
+import { IToken } from '../entities/Token';
 
 export class JWTSigner implements Signer {
   private options: object;
@@ -17,12 +18,12 @@ export class JWTSigner implements Signer {
       throw new Error('Module unable to sign payload');
     }
   }
-  verifyToken(token: string, key: string): IParcel {
+  verifyToken(token: string, key: string): IToken {
     try {
       // Verify token and extract payload
       const payload = jwt.verify(token, key, this.options);
-      // Return payload
-      return { isError: false, payload: payload };
+      // Return verified token
+      return payload;
     } catch {
       // Token verification failed
       throw new Error('Module unable to verify token');

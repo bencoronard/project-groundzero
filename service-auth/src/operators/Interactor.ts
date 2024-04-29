@@ -1,11 +1,12 @@
 import { Dispatcher } from '../shared/Dispatcher';
 import { IUser, Identity, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
-import { IResponseHTTP } from '../shared/ResponseHTTP';
+import { IResponseHTTP, ResponseHTTP } from '../shared/ResponseHTTP';
 import { IParcel } from '../shared/Parcel';
 import { Hasher } from '../entities/Hasher';
 import { Signer } from '../entities/Signer';
 import { Authorization } from '../entities/Authorization';
+import { IToken } from '../entities/Token';
 
 export class Interactor implements UserInteractor {
   private baseURL: string;
@@ -38,6 +39,8 @@ export class Interactor implements UserInteractor {
   }
 
   async createUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Check missing inputs
       if (!parsedBody.credentials) {
@@ -77,26 +80,30 @@ export class Interactor implements UserInteractor {
       if (operationResult.isError) {
         throw new Error('Unable to create new user');
       }
-      // Construct response
-      const response: IResponseHTTP = {
-        statusCode: 201,
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          isError: false,
-          payload: 'New user created',
-        },
-      };
+      // Set successful response
+      response
+        .setStatus(201)
+        .getBody()
+        .setError(false)
+        .setPayload('New user created');
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Operation failed
-      throw new Error('Error creating new user: ' + (error as Error).message);
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error creating new user: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 
   async authenticateUser(parsedBody: {
     [key: string]: any;
   }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Check missing inputs
       if (!parsedBody.credentials) {
@@ -141,50 +148,53 @@ export class Interactor implements UserInteractor {
         payload,
         this.privateKey
       );
-      // Construct response
-      const response: IResponseHTTP = {
-        statusCode: 202,
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          isError: false,
-          payload: accessToken,
-        },
-      };
+      // Set successful response
+      response.setStatus(202).getBody().setError(false).setPayload(accessToken);
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Operation failed
-      throw new Error('Error authenticating user: ' + (error as Error).message);
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error authenticating user: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 
   async authorizeUser(parsedHeader: {
     [key: string]: any;
   }): Promise<IResponseHTTP> {
+    // Initialize response
+    const response: ResponseHTTP = new ResponseHTTP();
     try {
       // Check missing inputs
       if (!parsedHeader.bearerToken) {
         throw new Error('Missing Access Token');
       }
       // Verify token
-      const operationResult: IParcel = this.signer.verifyToken(
+      const operationResult: IToken = this.signer.verifyToken(
         parsedHeader.bearerToken,
         this.publicKey
       );
-      // Construct response
-      const response: IResponseHTTP = {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          isError: false,
-          payload: operationResult.payload,
-        },
-      };
+
+      // Set successful response
+      response
+        .setStatus(202)
+        .getBody()
+        .setError(false)
+        .setPayload(operationResult);
       // Return successful response
-      return response;
+      return response.seal();
     } catch (error) {
-      // Operation failed
-      throw new Error('Error authorizing user: ' + (error as Error).message);
+      // Set error response
+      response
+        .getBody()
+        .setDesc('Error message')
+        .setPayload('Error authorizing user: ' + (error as Error).message);
+      // Return error response
+      return response.seal();
     }
   }
 }
