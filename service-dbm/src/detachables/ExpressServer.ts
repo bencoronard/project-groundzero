@@ -1,16 +1,17 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import express, { Application } from 'express';
-import { ExpressHTTP } from './detachables/ExpressHTTP';
-import { Interactor } from './operators/Interactor';
-import { Controller } from './operators/Controller';
-import { RecordRepository } from './entities/RecordRepository';
-import { StorageMySQL } from './detachables/StorageMySQL';
-import { StorageMongoDB } from './detachables/StorageMongoDB';
-import { IResponseHTTP } from './shared/ResponseHTTP';
-import { RequestHTTP } from './shared/RequestHTTP';
+import { ExpressHTTP } from './ExpressHTTP';
+import { Interactor } from '../operators/Interactor';
+import { Controller } from '../operators/Controller';
+import { RecordRepository } from '../entities/RecordRepository';
+import { StorageMySQL } from './StorageMySQL';
+import { StorageMongoDB } from './StorageMongoDB';
+import { IResponseHTTP } from '../shared/ResponseHTTP';
+import { RequestHTTP } from '../shared/RequestHTTP';
+import { Server } from '../shared/Server';
 
-export class Server {
+export class ExpressServer implements Server {
   private db: RecordRepository;
   private app: Application;
   private params: { port: number; dbType: string };
@@ -89,7 +90,7 @@ export class Server {
     }
   }
 
-  start() {
+  start(): void {
     try {
       // Instantiate Interactor
       const interactor = new Interactor(this.db);
@@ -128,7 +129,7 @@ export class Server {
     }
   }
 
-  async stop() {
+  async stop(): Promise<void> {
     try {
       // Close database connections
       await this.db.closeConnection();

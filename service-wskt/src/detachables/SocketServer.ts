@@ -1,8 +1,9 @@
 import WebSocket from 'ws';
 import dotenv from 'dotenv';
 import path from 'path';
+import { Server } from '../shared/Server';
 
-export class Server {
+export class SocketServer implements Server {
   private app: WebSocket.Server;
   private params: { port: number; timeout: number; heartbeat: number };
 
