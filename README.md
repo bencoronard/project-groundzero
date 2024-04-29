@@ -49,7 +49,7 @@ Because of the modular design and clear separation of concerns, the modules can 
 
 ## Progress
 
-- `/services-dbm`: Implemented
+- `/services-dbm`: Implemented / Adding security functionalities
 - `/services-wskt`: Implemented
 - `/services-auth`: Implementing
 - `/services-web`: Planned

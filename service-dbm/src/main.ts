@@ -1,8 +1,9 @@
-import { Server } from './Server';
+import { Server } from './shared/Server';
+import { ExpressServer } from './detachables/ExpressServer';
 
 try {
   // Create a server instance
-  const server = new Server();
+  const server: Server = new ExpressServer();
   // Handle process terminations
   process.on('SIGINT', async () => {
     await shutdownServer(server);
