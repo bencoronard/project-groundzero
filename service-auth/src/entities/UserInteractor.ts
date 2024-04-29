@@ -1,7 +1,7 @@
-import { ResponseHTTP } from '../shared/ResponseHTTP';
+import { IResponseHTTP } from '../shared/ResponseHTTP';
 
 export interface UserInteractor {
-  createUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
-  authenticateUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
-  authorizeUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP>;
+  createUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP>;
+  authenticateUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP>;
+  authorizeUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP>;
 }

@@ -1,11 +1,10 @@
 import { Dispatcher } from '../shared/Dispatcher';
 import { IUser, Identity, User } from '../entities/User';
 import { UserInteractor } from '../entities/UserInteractor';
-import { ResponseHTTP } from '../shared/ResponseHTTP';
-import { ParcelUniversal } from '../shared/ParcelUniversal';
+import { IResponseHTTP } from '../shared/ResponseHTTP';
+import { IParcel } from '../shared/Parcel';
 import { Hasher } from '../entities/Hasher';
 import { Signer } from '../entities/Signer';
-import { Cipher } from '../entities/Cipher';
 import { Authorization } from '../entities/Authorization';
 
 export class Interactor implements UserInteractor {
@@ -38,7 +37,7 @@ export class Interactor implements UserInteractor {
     this.privateKey = privateKey;
   }
 
-  async createUser(parsedBody: { [key: string]: any }): Promise<ResponseHTTP> {
+  async createUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP> {
     try {
       // Check missing inputs
       if (!parsedBody.credentials) {
@@ -49,7 +48,7 @@ export class Interactor implements UserInteractor {
         parsedBody.credentials
       );
       // Check if user already exists
-      const checkExisting: ParcelUniversal = await this.dispatcher.dispatch(
+      const checkExisting: IParcel = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'GET' },
         { identifier: parsedCredentials.identifier, limit: 1 }
       );
@@ -70,7 +69,7 @@ export class Interactor implements UserInteractor {
         lastAuthenticated: Date.now(),
       };
       // Send user record to database to store
-      const operationResult: ParcelUniversal = await this.dispatcher.dispatch(
+      const operationResult: IParcel = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'POST' },
         [User.flatten(newUser)]
       );
@@ -79,7 +78,7 @@ export class Interactor implements UserInteractor {
         throw new Error('Unable to create new user');
       }
       // Construct response
-      const response: ResponseHTTP = {
+      const response: IResponseHTTP = {
         statusCode: 201,
         headers: { 'Content-Type': 'application/json' },
         body: {
@@ -97,7 +96,7 @@ export class Interactor implements UserInteractor {
 
   async authenticateUser(parsedBody: {
     [key: string]: any;
-  }): Promise<ResponseHTTP> {
+  }): Promise<IResponseHTTP> {
     try {
       // Check missing inputs
       if (!parsedBody.credentials) {
@@ -117,7 +116,7 @@ export class Interactor implements UserInteractor {
         update: { lastAuthenticated: Date.now() },
       };
       // Send parcel to database
-      let operationResult: ParcelUniversal = await this.dispatcher.dispatch(
+      let operationResult: IParcel = await this.dispatcher.dispatch(
         { url: this.baseURL, method: 'PUT' },
         packet
       );
@@ -143,7 +142,7 @@ export class Interactor implements UserInteractor {
         this.privateKey
       );
       // Construct response
-      const response: ResponseHTTP = {
+      const response: IResponseHTTP = {
         statusCode: 202,
         headers: { 'Content-Type': 'application/json' },
         body: {
@@ -161,19 +160,19 @@ export class Interactor implements UserInteractor {
 
   async authorizeUser(parsedHeader: {
     [key: string]: any;
-  }): Promise<ResponseHTTP> {
+  }): Promise<IResponseHTTP> {
     try {
       // Check missing inputs
       if (!parsedHeader.bearerToken) {
         throw new Error('Missing Access Token');
       }
       // Verify token
-      const operationResult: ParcelUniversal = this.signer.verifyToken(
+      const operationResult: IParcel = this.signer.verifyToken(
         parsedHeader.bearerToken,
         this.publicKey
       );
       // Construct response
-      const response: ResponseHTTP = {
+      const response: IResponseHTTP = {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
         body: {

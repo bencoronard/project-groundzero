@@ -1,6 +1,6 @@
-import { ParcelUniversal } from '../shared/ParcelUniversal';
+import { IParcel } from '../shared/Parcel';
 
 export interface Signer {
   signToken(payload: any, key: string): string;
-  verifyToken(token: string, key: string): ParcelUniversal;
+  verifyToken(token: string, key: string): IParcel;
 }
