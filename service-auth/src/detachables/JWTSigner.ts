@@ -18,7 +18,7 @@ export class JWTSigner implements Signer {
       throw new Error('Module unable to sign payload');
     }
   }
-  verifyToken(token: string, key: string): IToken {
+  verifyToken(token: string, key: string): any {
     try {
       // Verify token and extract payload
       const payload = jwt.verify(token, key, this.options);

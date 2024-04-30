@@ -139,7 +139,7 @@ export class Interactor implements UserInteractor {
         { identifier: parsedCredentials.identifier, limit: 1 }
       );
       // Construct token payload
-      const payload = {
+      const payload: IToken = {
         user: parsedCredentials.identifier,
         permissions: operationResult.payload[0].permissions,
       };

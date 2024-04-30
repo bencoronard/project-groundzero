@@ -1,6 +1,6 @@
 import { IAuthorization } from './Authorization';
 
 export interface IToken {
-  owner: string;
+  user: string;
   permissions: IAuthorization;
 }
