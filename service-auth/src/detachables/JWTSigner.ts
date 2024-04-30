@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { Signer } from '../entities/Signer';
-import { IParcel } from '../shared/Parcel';
-import { IToken } from '../entities/Token';
 
 export class JWTSigner implements Signer {
   private options: object;

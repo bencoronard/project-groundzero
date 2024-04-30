@@ -69,7 +69,7 @@ export class Interactor implements UserInteractor {
       const newUser: IUser = {
         credentials: parsedCredentials,
         permissions: Authorization.user(),
-        lastAuthenticated: Date.now(),
+        sessionExpires: Date.now(),
       };
       // Send user record to database to store
       const operationResult: IParcel = await this.dispatcher.dispatch(
@@ -134,22 +134,22 @@ export class Interactor implements UserInteractor {
           : new Error('Incorrect user credentials');
       }
       // Fetch permissions
-      operationResult = await this.dispatcher.dispatch(
-        { url: this.baseURL, method: 'GET' },
-        { identifier: parsedCredentials.identifier, limit: 1 }
-      );
+      // operationResult = await this.dispatcher.dispatch(
+      //   { url: this.baseURL, method: 'GET' },
+      //   { identifier: parsedCredentials.identifier, limit: 1 }
+      // );
       // Construct token payload
-      const payload: IToken = {
-        user: parsedCredentials.identifier,
-        permissions: operationResult.payload[0].permissions,
-      };
+      // const payload: IToken = {
+      //   user: parsedCredentials.identifier,
+      //   permissions: operationResult.payload[0].permissions,
+      // };
       // Sign token payload
-      const accessToken: string = this.signer.signToken(
-        payload,
-        this.privateKey
-      );
+      // const accessToken: string = this.signer.signToken(
+      //   payload,
+      //   this.privateKey
+      // );
       // Set successful response
-      response.setStatus(202).getBody().setError(false).setPayload(accessToken);
+      // response.setStatus(202).getBody().setError(false).setPayload(accessToken);
       // Return successful response
       return response.seal();
     } catch (error) {

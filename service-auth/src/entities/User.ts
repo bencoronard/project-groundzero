@@ -8,7 +8,7 @@ export interface Identity {
 export interface IUser {
   credentials: Identity;
   permissions: IAuthorization;
-  lastAuthenticated: number;
+  sessionExpires: number;
 }
 
 export class User {
@@ -38,7 +38,7 @@ export class User {
     return {
       ...input.credentials,
       permissions: input.permissions,
-      lastAuthenticated: input.lastAuthenticated,
+      sessionExpires: input.sessionExpires,
     };
   }
 }
