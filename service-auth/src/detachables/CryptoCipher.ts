@@ -11,7 +11,7 @@ export class CryptoCipher implements Cipher {
     // Default binary encoding
     this.binEncoding = 'base64';
     // Default character encoding
-    this.charEncoding = 'utf-8';
+    this.charEncoding = 'utf8';
     // Default symmetric encrypting algorithm
     this.symmAlgorithm = 'aes-256-cbc';
     // Default separator for symmetric encryption (IV + sep + encryptedData)
@@ -25,7 +25,7 @@ export class CryptoCipher implements Cipher {
       // Return key pair
       return key;
     } catch (error) {
-      // Key pair generation failed
+      // Key generation failed
       throw error;
     }
   }
@@ -70,8 +70,7 @@ export class CryptoCipher implements Cipher {
       return combined;
     } catch (error) {
       // Text encryption failed
-      throw error;
-      // throw new Error('Module unable to symmetrically encrypt input');
+      throw new Error('Module unable to symmetrically encrypt input');
     }
   }
 
@@ -86,7 +85,7 @@ export class CryptoCipher implements Cipher {
       // Create AES decipher with key and extracted IV
       const decipher = crypto.createDecipheriv(
         this.symmAlgorithm,
-        Buffer.from(key),
+        Buffer.from(key, this.binEncoding),
         iv
       );
       // Initialize decryption task
@@ -101,8 +100,7 @@ export class CryptoCipher implements Cipher {
       return decrypted;
     } catch (error) {
       // Text decryption failed
-      throw error;
-      // throw new Error('Module unable to symmetrically decrypt input');
+      throw new Error('Module unable to symmetrically decrypt input');
     }
   }
 
@@ -120,8 +118,7 @@ export class CryptoCipher implements Cipher {
       return encrypted.toString(this.binEncoding);
     } catch (error) {
       // Text encryption failed
-      // throw new Error('Module unable to encrypt input');
-      throw error;
+      throw new Error('Module unable to encrypt input');
     }
   }
 
@@ -139,8 +136,7 @@ export class CryptoCipher implements Cipher {
       return decrypted.toString(this.charEncoding);
     } catch (error) {
       // Text decryption failed
-      // throw new Error('Module unable to decrypt input');
-      throw error;
+      throw new Error('Module unable to decrypt input');
     }
   }
 }
