@@ -9,7 +9,7 @@ export class SocketServer implements Server {
 
   constructor() {
     try {
-      dotenv.config({ path: path.resolve(__dirname, '.env') });
+      dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
       this.params = this.config();
       this.app = new WebSocket.Server({ port: this.params.port });
     } catch (error) {

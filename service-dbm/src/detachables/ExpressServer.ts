@@ -19,7 +19,7 @@ export class ExpressServer implements Server {
   constructor() {
     try {
       // Read parameters in .env file
-      dotenv.config({ path: path.resolve(__dirname, '.env') });
+      dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
       this.params = this.config();
       // Create a database connection
       this.db = this.setupDB();

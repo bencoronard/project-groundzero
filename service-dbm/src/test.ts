@@ -15,15 +15,15 @@ const queryParams: { [key: string]: any } = {
   offset: 0,
 };
 
-const updateData = {
-  match: { field4: 'TH' },
-  update: { field3: 'Sawasdee' },
-};
-
 // const updateData = {
 //   match: { field4: 'TH' },
-//   update: {},
+//   update: { field3: 'Sawasdee' },
 // };
+
+const updateData = {
+  match: { field4: 'TH' },
+  update: {},
+};
 
 const postData = {
   records: [
@@ -59,38 +59,44 @@ test();
 async function test() {
   let operationResult: IParcel;
 
-  operationResult = await dispatcher.dispatch(
+  operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'POST' },
+    undefined,
     postData
   );
   console.log('Response:\n', operationResult);
 
-  operationResult = await dispatcher.dispatch(
+  operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'GET' },
+    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
 
-  operationResult = await dispatcher.dispatch(
+  operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'PUT' },
+    undefined,
     updateData
   );
   console.log('Response:\n', operationResult);
 
-  operationResult = await dispatcher.dispatch(
+  operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'GET' },
+    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
 
-  operationResult = await dispatcher.dispatch(
+  operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'DELETE' },
+    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
 
-  operationResult = await dispatcher.dispatch(
+  operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'GET' },
+    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
