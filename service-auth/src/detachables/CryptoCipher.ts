@@ -18,6 +18,18 @@ export class CryptoCipher implements Cipher {
     this.sep = ':';
   }
 
+  async generateKey(): Promise<string> {
+    try {
+      // Generate symmetric key (256-bit)
+      const key = crypto.randomBytes(32).toString(this.binEncoding);
+      // Return key pair
+      return key;
+    } catch (error) {
+      // Key pair generation failed
+      throw error;
+    }
+  }
+
   async generateKeyPair(): Promise<{ publicKey: string; privateKey: string }> {
     try {
       // Generate public-private key pair
@@ -27,7 +39,7 @@ export class CryptoCipher implements Cipher {
         privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
       });
       // Return key pair
-      return keys;
+      return { publicKey: keys.publicKey, privateKey: keys.privateKey };
     } catch (error) {
       // Key pair generation failed
       throw error;
@@ -58,7 +70,8 @@ export class CryptoCipher implements Cipher {
       return combined;
     } catch (error) {
       // Text encryption failed
-      throw new Error('Module unable to symmetrically encrypt input');
+      throw error;
+      // throw new Error('Module unable to symmetrically encrypt input');
     }
   }
 
@@ -88,7 +101,8 @@ export class CryptoCipher implements Cipher {
       return decrypted;
     } catch (error) {
       // Text decryption failed
-      throw new Error('Module unable to symmetrically decrypt input');
+      throw error;
+      // throw new Error('Module unable to symmetrically decrypt input');
     }
   }
 
@@ -106,7 +120,8 @@ export class CryptoCipher implements Cipher {
       return encrypted.toString(this.binEncoding);
     } catch (error) {
       // Text encryption failed
-      throw new Error('Module unable to encrypt input');
+      // throw new Error('Module unable to encrypt input');
+      throw error;
     }
   }
 
@@ -124,7 +139,8 @@ export class CryptoCipher implements Cipher {
       return decrypted.toString(this.charEncoding);
     } catch (error) {
       // Text decryption failed
-      throw new Error('Module unable to decrypt input');
+      // throw new Error('Module unable to decrypt input');
+      throw error;
     }
   }
 }
