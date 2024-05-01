@@ -4,9 +4,9 @@ import { Hasher } from '../entities/Hasher';
 export class BcryptHasher implements Hasher {
   private saltRounds: number;
 
-  constructor(saltRounds: number) {
-    // Hasing options
-    this.saltRounds = saltRounds;
+  constructor() {
+    // Default hasing salt rounds
+    this.saltRounds = 10;
   }
 
   async hash(plainText: string): Promise<string> {
