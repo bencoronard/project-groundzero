@@ -1,7 +1,7 @@
 import { IAuthorization } from './Authorization';
 
 export interface UserManagement {
-  issueAccessToken(): string;
+  issueAccessToken(username: string, permission: string): string;
   issueRefreshToken(AccessToken: string): string;
   generateKey(
     username: string,
@@ -12,7 +12,11 @@ export interface UserManagement {
   ): string;
 }
 
-export interface AccessToken {}
+export interface AccessToken {
+  scope: string;
+  iat: number;
+  exp: number;
+}
 export interface RefreshToken {}
 
 export interface User {
@@ -20,5 +24,4 @@ export interface User {
   password: string;
   permission: string;
   session: number;
-  key: string;
 }
