@@ -72,7 +72,7 @@ export class Interactor implements UserInteractor {
         permissions: Authorization.user(),
         sessionExpires: Date.now(),
       };
-      // Send user record to database to store
+      // Send user record to database for storage
       const operationResult: IParcel = await this.dispatcher.dispatchInternal(
         { url: this.baseURL, method: 'POST' },
         undefined,

@@ -1,5 +1,3 @@
-import { IAuthorization } from './Authorization';
-
 export interface UserManagement {
   issueAccessToken(username: string, permission: string): string;
   issueRefreshToken(AccessToken: string): string;
@@ -13,7 +11,8 @@ export interface UserManagement {
 }
 
 export interface AccessToken {
-  scope: string;
+  aud: string; // userId
+  scope: string; // permission
   iat: number;
   exp: number;
 }
