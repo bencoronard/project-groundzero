@@ -2,26 +2,26 @@ import { IAuthorization } from './Authorization';
 
 export interface Identity {
   identifier: string; // i.e. username
-  passphrase: string; // i.e. password
+  secretKey: string; // i.e. password
 }
 
 export interface IUser {
   credentials: Identity;
   permissions: IAuthorization;
-  sessionExpires: number;
+  lastAuthenticated: number;
 }
 
 export class User {
   static parseCredentials(input: { [key: string]: string }): Identity {
     try {
       // Initialize empty credential object
-      const parsedCredentials: Identity = { identifier: '', passphrase: '' };
+      const parsedCredentials: Identity = { identifier: '', secretKey: '' };
       // Check for missing inputs
-      if (input.identifier && input.passphrase) {
+      if (input.identifier && input.secretKey) {
         // Parse input identifier
         parsedCredentials.identifier = input.identifier.toString();
-        // Parse input passphrase
-        parsedCredentials.passphrase = input.passphrase.toString();
+        // Parse input secretKey
+        parsedCredentials.secretKey = input.secretKey.toString();
       } else {
         // Missing one or more input data
         throw new Error('Incomplete input credentials');
@@ -38,7 +38,7 @@ export class User {
     return {
       ...input.credentials,
       permissions: input.permissions,
-      sessionExpires: input.sessionExpires,
+      lastAuthenticated: input.lastAuthenticated,
     };
   }
 }
