@@ -4,13 +4,7 @@ export interface IToken {
   user: string;
   permissions: IAuthorization;
 }
-// export interface IdTokenPayload {
-//   sub: string; // subject
-//   iss: string; // issuer
-//   aud: string; // audience
-//   exp: number; // expiration (UNIX timestamps)
-//   iat: number; // issued (UNIX timestamp)
-// }
+
 export interface AccessTokenPayload {
   sub: string; // subject
   iss: string; // issuer
@@ -27,7 +21,14 @@ export interface RefreshTokenPayload {
   iat: number; // issued (UNIX timestamp)
 }
 
-export class Token {
-  // static issueIdToken(): IdTokenPayload {}
-  // static issueAccessToken(): AccessTokenPayload {}
+export interface Token {
+  issueAccessToken(username: string, permission: string): string;
+  issueRefreshToken(AccessToken: string): string;
+  generateKey(
+    username: string,
+    password: string,
+    permission: string,
+    session: number,
+    serverKey: string
+  ): string;
 }

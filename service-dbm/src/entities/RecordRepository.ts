@@ -1,4 +1,5 @@
 import { IRecord } from './Record';
+
 export interface RecordRepository {
   createEntries(recordsToInsert: IRecord[]): Promise<number>;
 

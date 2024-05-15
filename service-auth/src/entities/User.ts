@@ -37,6 +37,7 @@ export class User {
   static flatten(input: IUser) {
     // Flatten user object for storage
     return {
+      userId: input.userId,
       ...input.credentials,
       permissions: input.permissions,
       lastAuthenticated: input.lastAuthenticated,
