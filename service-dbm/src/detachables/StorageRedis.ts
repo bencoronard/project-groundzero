@@ -1,6 +1,9 @@
+import redis from 'redis';
+
 export class StorageRedis {
-  private client: number;
+  private client: redis.RedisClientType;
+
   constructor(config: { uri: string }) {
-    this.client = 4;
+    this.client = redis.createClient();
   }
 }
