@@ -6,6 +6,7 @@ export interface Identity {
 }
 
 export interface IUser {
+  userId: number;
   credentials: Identity;
   permissions: IAuthorization;
   lastAuthenticated: number;
