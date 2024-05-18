@@ -23,13 +23,20 @@ export class RedisSessionStore implements SessionStore {
 
   async createSession(sessionData: ISession): Promise<void> {
     try {
-      const insert = JSON.stringify({
+      // Extract data to store in a session
+      const session = {
         userId: sessionData.userId,
         permissions: sessionData.permissions,
         created: sessionData.created,
+      };
+      // Compute session Time-To-Live
+      const sessionDuration = Math.floor(
+        (sessionData.expires - Date.now()) / 1000
+      );
+      // Store session
+      await this.client.set(sessionData.sessionId, JSON.stringify(session), {
+        EX: sessionDuration,
       });
-      const ttl = Math.floor((sessionData.expires - Date.now()) / 1000);
-      await this.client.set(sessionData.sessionId, insert, { EX: ttl });
     } catch {
       // An error occurred during execution
       throw new Error('Unable to create new session');
@@ -38,6 +45,17 @@ export class RedisSessionStore implements SessionStore {
 
   async verifySession(sessionId: string): Promise<void> {
     try {
+      // Retrieve existing session
+      const retrievedData = await this.client.get(sessionId);
+      if (retrievedData) {
+        // Parse session data
+        const session = JSON.parse(retrievedData);
+        // Return session data
+        console.log(session);
+      } else {
+        // No session exists
+        console.log('No session');
+      }
     } catch {
       // An error occurred during execution
       throw new Error('Unable to verify session');
@@ -46,6 +64,8 @@ export class RedisSessionStore implements SessionStore {
 
   async terminateSession(sessionId: string): Promise<void> {
     try {
+      await this.client.del(sessionId);
+      console.log('Session terminated');
     } catch {
       // An error occurred during execution
       throw new Error('Unable to terminate session');
