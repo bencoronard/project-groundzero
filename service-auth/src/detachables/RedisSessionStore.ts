@@ -21,7 +21,7 @@ export class RedisSessionStore implements SessionStore {
     }
   }
 
-  async createSession(sessionData: ISession): Promise<void> {
+  async createSession(sessionData: ISession): Promise<boolean> {
     try {
       // Extract data to store in a session
       const session = {
@@ -37,35 +37,32 @@ export class RedisSessionStore implements SessionStore {
       await this.client.set(sessionData.sessionId, JSON.stringify(session), {
         EX: sessionDuration,
       });
+      // Return successful operation
+      return true;
     } catch {
       // An error occurred during execution
       throw new Error('Unable to create new session');
     }
   }
 
-  async verifySession(sessionId: string): Promise<void> {
+  async verifySession(sessionId: string): Promise<Partial<ISession> | null> {
     try {
       // Retrieve existing session
       const retrievedData = await this.client.get(sessionId);
-      if (retrievedData) {
-        // Parse session data
-        const session = JSON.parse(retrievedData);
-        // Return session data
-        console.log(session);
-      } else {
-        // No session exists
-        console.log('No session');
-      }
+      // Return session data
+      return retrievedData ? JSON.parse(retrievedData) : retrievedData;
     } catch {
       // An error occurred during execution
       throw new Error('Unable to verify session');
     }
   }
 
-  async terminateSession(sessionId: string): Promise<void> {
+  async terminateSession(sessionId: string): Promise<boolean> {
     try {
+      // Delete existing session
       await this.client.del(sessionId);
-      console.log('Session terminated');
+      // Return successful operation
+      return true;
     } catch {
       // An error occurred during execution
       throw new Error('Unable to terminate session');
