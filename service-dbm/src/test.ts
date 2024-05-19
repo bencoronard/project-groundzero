@@ -61,42 +61,36 @@ async function test() {
 
   operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'POST' },
-    undefined,
     postData
   );
   console.log('Response:\n', operationResult);
 
   operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'GET' },
-    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
 
   operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'PUT' },
-    undefined,
     updateData
   );
   console.log('Response:\n', operationResult);
 
   operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'GET' },
-    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
 
   operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'DELETE' },
-    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);
 
   operationResult = await dispatcher.dispatchInternal(
     { url: baseUrl, method: 'GET' },
-    undefined,
     queryParams
   );
   console.log('Response:\n', operationResult);

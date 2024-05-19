@@ -90,7 +90,7 @@ export class Interactor implements RecordInteractor {
         .getBody()
         .setError(true)
         .setDesc('Error message')
-        .setPayload('Error creating records: ' + (error as Error).message);
+        .setPayload('Error updating records: ' + (error as Error).message);
       // Return error response
       return response.seal();
     }
@@ -136,7 +136,7 @@ export class Interactor implements RecordInteractor {
         .getBody()
         .setError(true)
         .setDesc('Error message')
-        .setPayload('Error creating records: ' + (error as Error).message);
+        .setPayload('Error retrieving records: ' + (error as Error).message);
       // Return error response
       return response.seal();
     }
@@ -170,7 +170,7 @@ export class Interactor implements RecordInteractor {
         .getBody()
         .setError(true)
         .setDesc('Error message')
-        .setPayload('Error creating records: ' + (error as Error).message);
+        .setPayload('Error deleting records: ' + (error as Error).message);
       // Return error response
       return response.seal();
     }
