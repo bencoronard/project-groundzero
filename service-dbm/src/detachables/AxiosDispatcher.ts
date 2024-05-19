@@ -7,8 +7,8 @@ export class AxiosDispatcher implements Dispatcher {
 
   async dispatchInternal(
     route: { url: string; method: string },
-    authorization?: { token: string },
-    packet?: { [key: string]: any }
+    packet: { [key: string]: any },
+    authorization?: { token: string }
   ): Promise<IParcel> {
     // Construct headers
     const heads = authorization
@@ -35,7 +35,6 @@ export class AxiosDispatcher implements Dispatcher {
             .catch((err) => {
               response = err.response.data;
             });
-
           break;
 
         case 'POST':
@@ -78,21 +77,20 @@ export class AxiosDispatcher implements Dispatcher {
           // Request method out of scope
           throw new Error('Dispatch method out of scope');
       }
-      // Return successful response
-      return response;
     } catch (error) {
       // Set error response
+      response.isError = true;
       response.description = 'Error message';
       response.payload = (error as Error).message;
-      // Return error response
-      return response;
     }
+    // Send response
+    return response;
   }
 
   async dispatchExternal(
     route: { url: string; method: string },
-    authorization?: { token: string },
-    packet?: { [key: string]: any }
+    packet: { [key: string]: any },
+    authorization?: { token: string }
   ): Promise<IParcel> {
     // Construct headers
     const heads = authorization
@@ -114,12 +112,14 @@ export class AxiosDispatcher implements Dispatcher {
               headers: heads,
             })
             .then((res) => {
-              response.setError(false).setPayload(res.data);
+              response.setPayload(res.data);
             })
             .catch((err) => {
-              response.setDesc('Error response').setPayload(err.response.data);
+              response
+                .setError(true)
+                .setDesc('Error response')
+                .setPayload(err.response.data);
             });
-
           break;
 
         case 'POST':
@@ -127,10 +127,13 @@ export class AxiosDispatcher implements Dispatcher {
           await axios
             .post(route.url, packet, { headers: heads })
             .then((res) => {
-              response.setError(false).setPayload(res.data);
+              response.setPayload(res.data);
             })
             .catch((err) => {
-              response.setDesc('Error response').setPayload(err.response.data);
+              response
+                .setError(true)
+                .setDesc('Error response')
+                .setPayload(err.response.data);
             });
           break;
 
@@ -139,10 +142,13 @@ export class AxiosDispatcher implements Dispatcher {
           await axios
             .put(route.url, packet, { headers: heads })
             .then((res) => {
-              response.setError(false).setPayload(res.data);
+              response.setPayload(res.data);
             })
             .catch((err) => {
-              response.setDesc('Error response').setPayload(err.response.data);
+              response
+                .setError(true)
+                .setDesc('Error response')
+                .setPayload(err.response.data);
             });
           break;
 
@@ -151,10 +157,13 @@ export class AxiosDispatcher implements Dispatcher {
           await axios
             .delete(route.url, { params: packet, headers: heads })
             .then((res) => {
-              response.setError(false).setPayload(res.data);
+              response.setPayload(res.data);
             })
             .catch((err) => {
-              response.setDesc('Error response').setPayload(err.response.data);
+              response
+                .setError(true)
+                .setDesc('Error response')
+                .setPayload(err.response.data);
             });
           break;
 
@@ -162,13 +171,14 @@ export class AxiosDispatcher implements Dispatcher {
           // Request method out of scope
           throw new Error('Dispatch method out of scope');
       }
-      // Return successful response
-      return response.pack();
     } catch (error) {
       // Set error response
-      response.setDesc('Error message').setPayload((error as Error).message);
-      // Return error response
-      return response.pack();
+      response
+        .setError(true)
+        .setDesc('Error message')
+        .setPayload((error as Error).message);
     }
+    // Send response
+    return response.pack();
   }
 }

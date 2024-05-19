@@ -60,6 +60,7 @@ export class Controller {
       // Set error response
       response
         .getBody()
+        .setError(true)
         .setDesc('Error message')
         .setPayload((error as Error).message);
       // Return error response

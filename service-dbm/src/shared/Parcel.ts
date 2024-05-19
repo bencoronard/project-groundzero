@@ -6,12 +6,12 @@ export interface IParcel {
 
 export class Parcel {
   private isError: boolean;
-  private description?: string;
   private payload: any;
+  private description?: string;
 
   constructor() {
     // Default isError
-    this.isError = true;
+    this.isError = false;
     // Default payload
     this.payload = null;
   }

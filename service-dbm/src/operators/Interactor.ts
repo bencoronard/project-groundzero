@@ -37,7 +37,6 @@ export class Interactor implements RecordInteractor {
       response
         .setStatus(201)
         .getBody()
-        .setError(false)
         .setDesc('Number of records created')
         .setPayload(insertedRecords);
       // Return successful response
@@ -46,6 +45,7 @@ export class Interactor implements RecordInteractor {
       // Set error response
       response
         .getBody()
+        .setError(true)
         .setDesc('Error message')
         .setPayload('Error creating records: ' + (error as Error).message);
       // Return error response
@@ -80,7 +80,6 @@ export class Interactor implements RecordInteractor {
       response
         .setStatus(200)
         .getBody()
-        .setError(false)
         .setDesc('Number of records updated')
         .setPayload(updatedRecords);
       // Return successful response
@@ -89,6 +88,7 @@ export class Interactor implements RecordInteractor {
       // Set error response
       response
         .getBody()
+        .setError(true)
         .setDesc('Error message')
         .setPayload('Error creating records: ' + (error as Error).message);
       // Return error response
@@ -126,7 +126,6 @@ export class Interactor implements RecordInteractor {
       response
         .setStatus(200)
         .getBody()
-        .setError(false)
         .setDesc('Retrieved records')
         .setPayload(fetchedRecords);
       // Return successful response
@@ -135,6 +134,7 @@ export class Interactor implements RecordInteractor {
       // Set error response
       response
         .getBody()
+        .setError(true)
         .setDesc('Error message')
         .setPayload('Error creating records: ' + (error as Error).message);
       // Return error response
@@ -160,7 +160,6 @@ export class Interactor implements RecordInteractor {
       response
         .setStatus(200)
         .getBody()
-        .setError(false)
         .setDesc('Number of records deleted')
         .setPayload(deletedRecords);
       // Return successful response
@@ -169,6 +168,7 @@ export class Interactor implements RecordInteractor {
       // Set error response
       response
         .getBody()
+        .setError(true)
         .setDesc('Error message')
         .setPayload('Error creating records: ' + (error as Error).message);
       // Return error response
