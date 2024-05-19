@@ -1,11 +1,11 @@
-import redis from 'redis';
+import * as redis from 'redis';
 import { SessionStore } from '../entities/SessionStore';
 import { ISession } from '../entities/Session';
 
 export class RedisSessionStore implements SessionStore {
   private client: redis.RedisClientType;
 
-  constructor(config: { url: string }) {
+  constructor(config: any) {
     try {
       // Create Redis client connection
       this.client = redis.createClient(config);
@@ -29,7 +29,7 @@ export class RedisSessionStore implements SessionStore {
         permissions: sessionData.permissions,
         created: sessionData.created,
       };
-      // Compute session Time-To-Live
+      // Compute session Time-To-Live in seconds
       const sessionDuration = Math.floor(
         (sessionData.expires - Date.now()) / 1000
       );
@@ -50,7 +50,7 @@ export class RedisSessionStore implements SessionStore {
       // Retrieve existing session
       const retrievedData = await this.client.get(sessionId);
       // Return session data
-      return retrievedData ? JSON.parse(retrievedData) : retrievedData;
+      return retrievedData ? JSON.parse(retrievedData) : null;
     } catch {
       // An error occurred during execution
       throw new Error('Unable to verify session');
