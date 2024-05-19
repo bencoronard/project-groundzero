@@ -54,7 +54,6 @@ export class Interactor {
       // Check if user already exists
       const checkExisting: IParcel = await this.dispatcher.dispatchInternal(
         { url: this.baseURL, method: 'GET' },
-        undefined,
         { identifier: parsedCredentials.identifier, limit: 1 }
       );
       // Check operation result
@@ -76,7 +75,6 @@ export class Interactor {
       // Send user record to database for storage
       const operationResult: IParcel = await this.dispatcher.dispatchInternal(
         { url: this.baseURL, method: 'POST' },
-        undefined,
         [User.flatten(newUser)]
       );
       // Check operation result
@@ -128,7 +126,6 @@ export class Interactor {
       // Send parcel to database
       let operationResult: IParcel = await this.dispatcher.dispatchInternal(
         { url: this.baseURL, method: 'PUT' },
-        undefined,
         packet
       );
       // Check operation result
