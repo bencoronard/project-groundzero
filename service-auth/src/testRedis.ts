@@ -1,19 +1,19 @@
-import { RedisSessionStore } from './detachables/RedisSessionStore';
-import { Authorization } from './entities/Authorization';
-import { ISession } from './entities/Session';
 import dotenv from 'dotenv';
 import path from 'path';
-import { SessionStore } from './entities/SessionStore';
+import { RedisCache } from './detachables/RedisCache';
+import { Authorization } from './entities/Authorization';
+import { ISession } from './entities/Session';
+import { CacheStorage } from './shared/CacheStorage';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 if (process.env.REDIS) {
   const configs = JSON.parse(process.env.REDIS);
-  const storage = new RedisSessionStore(configs);
+  const storage = new RedisCache(configs);
   test(storage);
 }
 
-async function test(storage: SessionStore) {
+async function test(storage: CacheStorage) {
   const session: ISession = {
     sessionId: 'session:911',
     userId: 'user-sudo',
@@ -23,17 +23,22 @@ async function test(storage: SessionStore) {
   };
 
   try {
-    const result = await storage.createSession(session);
+    const result = await storage.set(
+      session.sessionId,
+      JSON.stringify({
+        sessionId: session.sessionId,
+        userId: session.userId,
+        permissions: session.permissions,
+      }),
+      session.expires
+    );
     if (result) {
-      console.log(
-        'Retrieved: ',
-        await storage.verifySession(session.sessionId)
-      );
+      console.log('Retrieved: ', await storage.get(session.sessionId));
       setTimeout(async () => {
-        await storage.terminateSession(session.sessionId);
+        await storage.delete(session.sessionId);
         console.log(
           'Retrieved (timeout): ',
-          await storage.verifySession(session.sessionId)
+          await storage.get(session.sessionId)
         );
         await storage.closeConnection();
       }, 10000);
