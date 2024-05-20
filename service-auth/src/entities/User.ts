@@ -6,10 +6,10 @@ export interface Identity {
 }
 
 export interface IUser {
-  userId: number;
+  userId: string;
   credentials: Identity;
   permissions: IAuthorization;
-  lastAuthenticated: number;
+  lastSessionId: string;
 }
 
 export class User {
@@ -40,7 +40,7 @@ export class User {
       userId: input.userId,
       ...input.credentials,
       permissions: input.permissions,
-      lastAuthenticated: input.lastAuthenticated,
+      lastSessionId: input.lastSessionId,
     };
   }
 }

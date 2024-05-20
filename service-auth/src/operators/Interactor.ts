@@ -8,8 +8,7 @@ import { Signer } from '../entities/Signer';
 import { Authorization } from '../entities/Authorization';
 import { IToken } from '../entities/Token';
 
-// export class Interactor implements UserInteractor {
-export class Interactor {
+export class Interactor implements UserInteractor {
   private baseURL: string;
   private dispatcher: Dispatcher;
   private hasher: Hasher;
