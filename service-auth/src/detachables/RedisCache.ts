@@ -1,6 +1,5 @@
 import * as redis from 'redis';
 import { CacheStorage } from '../shared/CacheStorage';
-import { Parcel, IParcel } from '../shared/Parcel';
 
 export class RedisCache implements CacheStorage {
   private client: redis.RedisClientType;
@@ -21,71 +20,36 @@ export class RedisCache implements CacheStorage {
     }
   }
 
-  async set(key: string, value: string, ttl?: number): Promise<IParcel> {
-    // Initialize response
-    const response: Parcel = new Parcel();
+  async set(key: string, value: string, ttl?: number): Promise<boolean> {
     try {
       // Perform Redis set operation
-      const operationResult = await this.client.set(
-        key,
-        value,
-        ttl
-          ? {
-              EX: ttl,
-            }
-          : undefined
-      );
-      // Set operation result to response
-      response.setPayload(operationResult);
+      return (await this.client.set(key, value, ttl ? { EX: ttl } : undefined))
+        ? true
+        : false;
     } catch {
-      // Set error response
-      response
-        .setError(true)
-        .setDesc('Error message')
-        .setPayload('Unable to create new entry');
+      // An error occurred during execution
+      throw new Error('Cache unable to create new entry');
     }
-    // Send response
-    return response.pack();
   }
 
-  async get(key: string): Promise<IParcel> {
-    // Initialize response
-    const response: Parcel = new Parcel();
+  async get(key: string): Promise<string> {
     try {
-      // Perform Redis get operation // null:
-      const operationResult = await this.client.get(key);
-      // Set operation result to response
-      response.setPayload(operationResult);
+      // Perform Redis get operation
+      return (await this.client.get(key)) ?? '';
     } catch {
-      // Set error response
-      response
-        .setError(true)
-        .setDesc('Error message')
-        .setPayload('Unable to get entry');
+      // An error occurred during execution
+      throw new Error('Cache unable to retrieve entry');
     }
-    // Send response
-    return response.pack();
   }
 
-  async delete(key: string): Promise<IParcel> {
-    // Initialize response
-    const response: Parcel = new Parcel();
+  async delete(key: string): Promise<boolean> {
     try {
       // Perform Redis delete operation // 1: key existed, 0: key didn't exist
-      const operationResult = await this.client.del(key);
-      // Set operation result to response
-      if (operationResult) {
-        response.setPayload(operationResult);
-      }
+      return (await this.client.del(key)) ? true : false;
     } catch {
-      // Set error response
-      response
-        .setError(true)
-        .setDesc('Error message')
-        .setPayload('Unable to delete entry');
+      // An error occurred during execution
+      throw new Error('Cache unable to delete entry');
     }
-    // Send response
-    return response.pack();
   }
 
   async closeConnection(): Promise<void> {

@@ -1,8 +1,6 @@
-import { IParcel } from './Parcel';
-
 export interface CacheStorage {
-  set(key: string, value: string, ttl?: number): Promise<IParcel>;
-  get(key: string): Promise<IParcel>;
-  delete(key: string): Promise<IParcel>;
+  set(key: string, value: string, ttl?: number): Promise<boolean>;
+  get(key: string): Promise<string>;
+  delete(key: string): Promise<boolean>;
   closeConnection(): Promise<void>;
 }

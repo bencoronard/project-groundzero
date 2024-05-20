@@ -18,6 +18,7 @@ export class BcryptHasher implements Hasher {
       throw new Error('Module unable to hash input');
     }
   }
+
   async compare(plainText: string, cipherText: string): Promise<boolean> {
     try {
       // Return whether two inputs are same

@@ -3,10 +3,12 @@ import { Signer } from '../entities/Signer';
 
 export class JWTSigner implements Signer {
   private options: { [key: string]: any };
+
   constructor() {
     // Signing options
     this.options = { algorithm: 'RS256' };
   }
+
   signToken(payload: any, key: string): string {
     try {
       // Return signed payload as JSON Web Token
@@ -16,6 +18,7 @@ export class JWTSigner implements Signer {
       throw new Error('Module unable to sign payload');
     }
   }
+
   verifyToken(token: string, key: string): any {
     try {
       // Verify token and extract payload
