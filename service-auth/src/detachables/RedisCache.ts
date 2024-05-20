@@ -52,7 +52,7 @@ export class RedisCache implements CacheStorage {
     // Initialize response
     const response: Parcel = new Parcel();
     try {
-      // Perform Redis get operation
+      // Perform Redis get operation // null:
       const operationResult = await this.client.get(key);
       // Set operation result to response
       response.setPayload(operationResult);
@@ -71,10 +71,12 @@ export class RedisCache implements CacheStorage {
     // Initialize response
     const response: Parcel = new Parcel();
     try {
-      // Perform Redis delete operation
+      // Perform Redis delete operation // 1: key existed, 0: key didn't exist
       const operationResult = await this.client.del(key);
       // Set operation result to response
-      response.setPayload(operationResult);
+      if (operationResult) {
+        response.setPayload(operationResult);
+      }
     } catch {
       // Set error response
       response

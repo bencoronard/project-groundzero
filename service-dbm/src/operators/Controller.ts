@@ -59,6 +59,7 @@ export class Controller {
       const response: ResponseHTTP = new ResponseHTTP();
       // Set error response
       response
+        .setStatus(400)
         .getBody()
         .setError(true)
         .setDesc('Error message')

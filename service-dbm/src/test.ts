@@ -15,15 +15,15 @@ const queryParams: { [key: string]: any } = {
   offset: 0,
 };
 
-// const updateData = {
-//   match: { field4: 'TH' },
-//   update: { field3: 'Sawasdee' },
-// };
-
 const updateData = {
   match: { field4: 'TH' },
-  update: {},
+  update: { field3: 'Sawasdee' },
 };
+
+// const updateData = {
+//   match: { field4: 'TH' },
+//   update: {},
+// };
 
 const postData = {
   records: [

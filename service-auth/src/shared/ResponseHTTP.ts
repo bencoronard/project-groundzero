@@ -13,7 +13,7 @@ export class ResponseHTTP {
 
   constructor() {
     // Default statusCode
-    this.statusCode = 400;
+    this.statusCode = 200;
     // Default headers
     this.headers = { 'Content-Type': 'application/json' };
     // Default body

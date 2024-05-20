@@ -44,6 +44,7 @@ export class Interactor implements RecordInteractor {
     } catch (error) {
       // Set error response
       response
+        .setStatus(400)
         .getBody()
         .setError(true)
         .setDesc('Error message')
@@ -78,7 +79,6 @@ export class Interactor implements RecordInteractor {
       );
       // Set successful response
       response
-        .setStatus(200)
         .getBody()
         .setDesc('Number of records updated')
         .setPayload(updatedRecords);
@@ -87,6 +87,7 @@ export class Interactor implements RecordInteractor {
     } catch (error) {
       // Set error response
       response
+        .setStatus(400)
         .getBody()
         .setError(true)
         .setDesc('Error message')
@@ -124,7 +125,6 @@ export class Interactor implements RecordInteractor {
       );
       // Set successful response
       response
-        .setStatus(200)
         .getBody()
         .setDesc('Retrieved records')
         .setPayload(fetchedRecords);
@@ -133,6 +133,7 @@ export class Interactor implements RecordInteractor {
     } catch (error) {
       // Set error response
       response
+        .setStatus(400)
         .getBody()
         .setError(true)
         .setDesc('Error message')
@@ -158,7 +159,6 @@ export class Interactor implements RecordInteractor {
       );
       // Set successful response
       response
-        .setStatus(200)
         .getBody()
         .setDesc('Number of records deleted')
         .setPayload(deletedRecords);
@@ -167,6 +167,7 @@ export class Interactor implements RecordInteractor {
     } catch (error) {
       // Set error response
       response
+        .setStatus(400)
         .getBody()
         .setError(true)
         .setDesc('Error message')
