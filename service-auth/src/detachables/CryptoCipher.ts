@@ -139,4 +139,6 @@ export class CryptoCipher implements Cipher {
       throw new Error('Module unable to decrypt input');
     }
   }
+
+  async generateUUID(): Promise<string> {}
 }
