@@ -98,4 +98,30 @@ export class Interactor implements UserInteractor {
       return response.seal();
     }
   }
+
+  async updateUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP> {
+    return new ResponseHTTP().seal();
+  }
+
+  async deleteUser(parsedBody: { [key: string]: any }): Promise<IResponseHTTP> {
+    return new ResponseHTTP().seal();
+  }
+
+  async authenticateUser(parsedBody: {
+    [key: string]: any;
+  }): Promise<IResponseHTTP> {
+    return new ResponseHTTP().seal();
+  }
+
+  async authorizeUser(parsedBody: {
+    [key: string]: any;
+  }): Promise<IResponseHTTP> {
+    return new ResponseHTTP().seal();
+  }
+
+  async deauthorizeUser(parsedBody: {
+    [key: string]: any;
+  }): Promise<IResponseHTTP> {
+    return new ResponseHTTP().seal();
+  }
 }
