@@ -1,6 +1,0 @@
-.env
-.prettierrc
-.prettierignore
-.DS_Store
-.vscode/
-node_modules/
